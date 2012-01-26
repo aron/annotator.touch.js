@@ -1,0 +1,237 @@
+body {
+  font-size: 1.6em;
+}
+
+.annotator-selection-handle {
+  cursor: pointer;
+  display: block;
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin-left: -22px;
+  margin-top: -22px;
+  border-radius: 50%;
+}
+
+.annotator-selection-handle::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  margin-left: -10px;
+  bottom: -5px;
+  background: url(../images/handle.png) no-repeat 0 0;
+}
+
+.annotator-selection-start::after {
+  top: -5px;
+  bottom: auto;
+  background-position: 0 -20px;
+}
+
+.annotator-selection-hide .annotator-selection-handle {
+  display: none;
+}
+
+.annotator-touch-controls {
+	position: fixed;
+	bottom: 15px;
+	right: 15px;
+}
+
+.annotator-touch-controls.annotator-touch-hide {
+	right: -9999em;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+}
+
+.annotator-touch-widget {
+	-webkit-tap-highlight-color: transparent;
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	border: 1px solid rgba(0, 0, 0, 0.8);
+	/*background-color: rgba(0, 0, 0, 0.85);*/
+	background-image: -webkit-gradient(
+		linear, left top, left bottom,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)),
+		color-stop(0.5, rgba(0, 0, 0, 0.85)),
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background-image: -moz-linear-gradient(
+		-90deg,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)),
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background-image: -webkit-linear-gradient(
+		-90deg,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	background-image: linear-gradient(
+		-90deg,
+		from(rgba(57, 57, 57, 0.85)),
+		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
+		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
+		to(rgba(0, 0, 0, 0.85))
+	);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.annotator-touch-widget-inner {
+	background: #efefef;
+	border: 1px solid rgba(0, 0, 0, 0.8);
+	margin: 5px;
+	padding: 7px;
+	line-height: 0;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-ms-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	-o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+.annotator-touch-widget .annotator-button {
+	font-size: 16px;
+	line-height: 44px;
+	padding-left: 40px;
+	padding-right: 15px;
+	-webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-ms-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-o-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+[data-annotator-use-icons] .annotator-touch-widget .annotator-button {
+	/* width & overflow is required by Android WebKit */
+	width: 0;
+	overflow: hidden;
+	text-indent: -999em;
+	padding-left: 30px;
+}
+
+.annotator-touch-widget .annotator-button[disabled] {
+	opacity: 0.3;
+}
+
+.annotator-touch-widget .annotator-button::after {
+	left: 15px;
+}
+
+.annotator-touch-widget .annotator-add::after,
+.annotator-touch-widget .annotator-add:hover::after,
+.annotator-touch-widget .annotator-add:focus::after,
+.annotator-touch-widget .annotator-add.annotator-focus::after {
+	margin-top: -7px;
+	background-position: 0 -270px;
+}
+
+.annotator-touch-editor {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	display: -webkit-box;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.8);
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+}
+
+.annotator-touch-editor .annotator-touch-widget {
+	pointer-events: all;
+	position: relative;
+	width: 80%;
+	max-width: 680px;
+}
+
+.annotator-touch-editor .annotator-touch-widget-inner {
+	position: static;
+	width: auto;
+	padding: 0;
+}
+
+.annotator-touch-editor .annotator-widget::after {
+	display: none;
+}
+
+.annotator-touch-editor .annotator-widget .annotator-item:first-child textarea {
+	font-size: 16px;
+	background-color: #fff;
+	-webkit-border-radius: 3px 3px 0 0;
+	-moz-border-radius: 3px 3px 0 0;
+	-o-border-radius: 3px 3px 0 0;
+	border-radius: 3px 3px 0 0;
+}
+
+.annotator-touch-editor .annotator-resize {
+	display: none;
+}
+
+.annotator-touch-editor .annotator-controls {
+	padding: 7px;
+	background-color: #efefef;
+	background-image: none;
+}
+
+.annotator-touch-editor .annotator-item-quote {
+	font-size: 14px;
+	line-height: 1.2;
+	border-color: #cebfa2;
+	background-color: #fbfae9;
+	color: #a58129;
+	padding: 10px 7px;
+}
+
+.annotator-item-quote span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #a58129;
+	font-family: Georgia, serif;
+}
+
+.annotator-item-quote.annotator-touch-expand span {
+	overflow: visible;
+	text-overflow: inherit;
+	white-space: inherit;
+}
+
+.annotator-item-quote button {
+	font-size: 12px;
+	line-height: 44px;
+	margin-top: -13px;
+	float: right;
+	text-transform: uppercase;
+	font-weight: bold;
+	color: #a58129;
+	border: none;
+	background: none;
+	margin-left: 10px;
+	cursor: pointer;
+}

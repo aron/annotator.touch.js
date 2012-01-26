@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html data-annotator-use-icons>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selection</title>
+  <link rel="stylesheet" href="./vendor/annotator.css" />
+  <link rel="stylesheet" href="./css/annotator.touch.css" />
+</head>
+<body>
+  <p>Out of Bounds</p>
+  <div id="content">
+    <p>One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly <big>domed</big> and divided by arches into stiff sections. The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked.</p>
+
+    <p>"What's happened to me?" he thought. It wasn't a dream. His room, a proper human room although a little too small, lay peacefully between its four familiar walls. A collection of textile samples lay spread out on the table - Samsa was a travelling salesman - and above it there hung a picture that he had recently cut out of an illustrated magazine and housed in a nice, gilded frame. It showed a lady fitted out with a fur hat and fur boa who sat upright, raising a heavy fur muff that covered the whole of her lower arm towards the viewer.</p>
+
+    <p>Gregor then turned to look out the window at the dull weather. Drops of rain could be heard hitting the pane, which made him feel quite sad. "How about if I sleep a little bit longer and forget all this nonsense", he thought, but that was something he was unable to do because he was used to sleeping on his right, and in his present state couldn't get into that position. However hard he threw himself onto his right, he always rolled back to where he was. He must have tried it a hundred times, shut his eyes so that he wouldn't have to look at the floundering legs, and only stopped when he began to feel a mild, dull pain there that he had never felt before.</p>
+  </div>
+  <p>Out of Bounds</p>
+  <script src="./vendor/jquery.js"></script>
+  <script src="./vendor/annotator.js"></script>
+  <script src="./vendor/highlighter.js"></script>
+  <script src="./vendor/coffeescript.js"></script>
+  <script type="text/coffeescript">
+    # Attept at error handling for touch devices.
+    window.onerror = (msg, file, line) ->
+      alert(msg + ' ' + file + ' ' + line)
+
+    jQuery.ajaxSetup async: false
+
+    modules = jQuery.trim """
+    touch touch/utils touch/editor
+    """
+    modules = modules.split(/\s+/)
+
+    run = (file, source) ->
+      filename = file.replace /coffee$/, "js"
+      compiled = "#{CoffeeScript.compile(source)}\n//@ sourceURL=#{filename}"
+      eval(compiled)
+
+    sources = ("./src/#{script}.coffee" for script in modules)
+    requests = jQuery.map sources, (script) ->
+      jQuery.get script, jQuery.proxy(run, this, script)
+
+    jQuery.when.apply(jQuery, requests).done ->
+      jQuery("#content").annotator().annotator('addPlugin', 'Touch', {
+        force: location.search.indexOf('force') > -1,
+        useHighlighter: location.search.indexOf('highlighter') > -1
+      })
+      window.annotator = jQuery("#content").data('annotator')
+  </script>
+</body>
+</html>

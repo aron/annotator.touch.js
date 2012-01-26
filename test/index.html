@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Test Suite</title>
+  <link rel="stylesheet" href="./vendor/mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="../vendor/jquery.js"></script>
+  <script src="../vendor/annotator.js"></script>
+  <script src="../vendor/highlighter.js"></script>
+  <script src="../vendor/coffeescript.js"></script>
+  <script src="./vendor/mocha.js"></script>
+  <script src="./vendor/sinon.js"></script>
+  <script src="./vendor/chai.js"></script>
+  <script src="./vendor/sinon-chai.js"></script>
+  <script>
+    mocha.setup('bdd');
+    window.expect = chai.expect;
+  </script>
+  <script type="text/coffeescript">
+    jQuery.ajaxSetup async: false
+
+    modules = jQuery.trim """
+    touch touch/utils
+    """
+    modules = modules.split(/\s+/)
+
+    run = (file, source) ->
+      filename = file.replace /coffee$/, "js"
+      compiled = "#{CoffeeScript.compile(source)}\n//@ sourceURL=#{filename}"
+      eval(compiled)
+
+    specs   = ("spec/#{script}.coffee"   for script in modules)
+    sources = ("../src/#{script}.coffee" for script in modules)
+    requests = jQuery.map sources, (script) ->
+      jQuery.get script, jQuery.proxy(run, this, script)
+    requests.concat jQuery.map specs, (script) ->
+      jQuery.get script, jQuery.proxy(run, this, script)
+
+    jQuery.when.apply(jQuery, requests).done ->
+      mocha.run().globals(['Annotator', 'jQuery'])
+  </script>
+</body>
+</html>
