@@ -27,6 +27,9 @@ jQuery.event.special.tap =
   remove: (data) ->
     jQuery(this).unbind data.tapHandlers
 
+# Add support for "touch" events.
+Annotator.Delegator.natives.push("touchstart", "touchmove", "touchend", "tap")
+
 Annotator.Plugin.Touch.utils = do ->
   vendors = ['ms', 'moz', 'webkit', 'o']
 
