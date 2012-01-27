@@ -1,3 +1,32 @@
+jQuery.event.special.tap =
+  add: (data) ->
+    context = this
+
+    onTapStart = (event) ->
+      event.preventDefault() if event.target is context
+      data.event = event
+      data.touched = setTimeout ->
+        data.touched = null
+      , 300
+      jQuery(document).bind touchend: onTapEnd, mouseup: onTapEnd
+
+    onTapEnd = (event) ->
+      if data.touched
+        clearTimeout(data.touched)
+        jQuery(document).unbind touchstart: onTapEnd, mousedown: onTapEnd
+        if event.target is context or jQuery.contains(context, event.target)
+          data.handler.call(this, data.event)
+        data.touched = null
+
+    data.tapHandlers = touchstart: onTapStart, mousedown: onTapStart
+    if data.selector
+      jQuery(context).delegate data.selector, data.tapHandlers
+    else
+      jQuery(context).bind data.tapHandlers
+
+  remove: (data) ->
+    jQuery(this).unbind data.tapHandlers
+
 Annotator.Plugin.Touch.utils = do ->
   vendors = ['ms', 'moz', 'webkit', 'o']
 
@@ -6,7 +35,7 @@ Annotator.Plugin.Touch.utils = do ->
 
   for prefix in vendors when !requestAnimationFrame
     requestAnimationFrame = window["#{prefix}RequestAnimationFrame"]
-    cancelAnimationFrame  = window["#{prefix}CancelAnimationFrame"] or window["#{prefix}RequestCancelAnimationFrame"]
+    cancelAnimationFrame  = window["#{prefix}CancelAnimationFrame"] or window["#{prefix}CancelRequestAnimationFrame"]
 
   unless requestAnimationFrame
     lastTime = 0
