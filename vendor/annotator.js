@@ -1,8 +1,8 @@
 (function() {
   var $, Annotator, Delegator, Range, fn, functions, gettext, util, _Annotator, _gettext, _i, _j, _len, _len2, _ref, _t,
     __slice = Array.prototype.slice,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   gettext = null;
@@ -197,10 +197,8 @@
     };
 
     Delegator.prototype.isCustomEvent = function(event) {
-      var natives;
-      natives = "touchmove touchstart touchend blur focus focusin focusout load resize scroll unload click dblclick\nmousedown mouseup mousemove mouseover mouseout mouseenter mouseleave\nchange select submit keydown keypress keyup error".split(/[^a-z]+/);
       event = event.split('.')[0];
-      return $.inArray(event, natives) === -1;
+      return $.inArray(event, Delegator.natives) === -1;
     };
 
     Delegator.prototype.publish = function() {
@@ -225,6 +223,22 @@
 
     return Delegator;
 
+  })();
+
+  Delegator.natives = (function() {
+    var key, specials, val;
+    specials = (function() {
+      var _ref2, _results;
+      _ref2 = jQuery.event.special;
+      _results = [];
+      for (key in _ref2) {
+        if (!__hasProp.call(_ref2, key)) continue;
+        val = _ref2[key];
+        _results.push(key);
+      }
+      return _results;
+    })();
+    return "blur focus focusin focusout load resize scroll unload click dblclick\nmousedown mouseup mousemove mouseover mouseout mouseenter mouseleave\nchange select submit keydown keypress keyup error".split(/[^a-z]+/).concat(specials);
   })();
 
   Range = {};
