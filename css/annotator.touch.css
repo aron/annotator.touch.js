@@ -42,6 +42,7 @@ body {
 	position: fixed;
 	bottom: 15px;
 	right: 15px;
+	min-width: auto;
 }
 
 .annotator-touch-controls.annotator-touch-hide {
@@ -88,13 +89,14 @@ body {
 	-ms-border-radius: 4px;
 	-o-border-radius: 4px;
 	border-radius: 4px;
+	-webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .annotator-touch-widget-inner {
 	background: #efefef;
 	border: 1px solid rgba(0, 0, 0, 0.8);
-	margin: 5px;
-	padding: 7px;
+	margin: 7px;
+	padding: 6px;
 	line-height: 0;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -112,7 +114,7 @@ body {
 	font-size: 16px;
 	line-height: 44px;
 	padding-left: 40px;
-	padding-right: 15px;
+	padding-right: 20px;
 	-webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 	-moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 	-ms-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
@@ -125,10 +127,10 @@ body {
 
 [data-annotator-use-icons] .annotator-touch-widget .annotator-button {
 	/* width & overflow is required by Android WebKit */
-	width: 0;
+	width: 1px;
 	overflow: hidden;
 	text-indent: -999em;
-	padding-left: 30px;
+	padding-left: 25px;
 }
 
 .annotator-touch-widget .annotator-button[disabled] {
@@ -139,12 +141,38 @@ body {
 	left: 15px;
 }
 
+.annotator-touch-controls .annotator-button {
+	line-height: 56px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button {
+	padding-left: 35px;
+}
+
 .annotator-touch-widget .annotator-add::after,
 .annotator-touch-widget .annotator-add:hover::after,
 .annotator-touch-widget .annotator-add:focus::after,
 .annotator-touch-widget .annotator-add.annotator-focus::after {
 	margin-top: -7px;
 	background-position: 0 -270px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button::after {
+	left: 20px;
+}
+
+.annotator-viewer .annotator-widget {
+	min-width: 320px;
+}
+
+.annotator-viewer div {
+	padding: 12px;
+}
+
+.annotator-viewer div:first-of-type {
+	font-size: 18px;
+	padding-top: 14px;
+	padding-bottom: 14px;
 }
 
 .annotator-touch-editor {
@@ -157,7 +185,7 @@ body {
 	height: 100%;
 	display: -webkit-box;
 	position: fixed;
-	background: rgba(0, 0, 0, 0.8);
+	background: rgba(255, 255, 255, 0.6);
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
 }
@@ -173,14 +201,36 @@ body {
 	position: static;
 	width: auto;
 	padding: 0;
+	background: #fff;
 }
 
 .annotator-touch-editor .annotator-widget::after {
 	display: none;
 }
 
+.annotator-touch-editor .annotator-widget .annotator-item {
+	border-top-color: rgba(0, 0, 0, 0.15);
+}
+
+.annotator-touch-editor .annotator-widget .annotator-item,
+.annotator-touch-editor.annotator-editor .annotator-item label,
+.annotator-touch-editor.annotator-editor .annotator-item input,
+.annotator-touch-editor.annotator-editor .annotator-item textarea {
+	font-size: 18px;
+}
+
+.annotator-touch-editor.annotator-editor .annotator-item input,
+.annotator-touch-editor.annotator-editor .annotator-item label {
+	line-height: 30px;
+	margin-left: 8px;
+}
+
+.annotator-touch-editor.annotator-editor .annotator-item input[checkbox] {
+	font-size: large;
+}
+
 .annotator-touch-editor .annotator-widget .annotator-item:first-child textarea {
-	font-size: 16px;
+	font-size: 18px;
 	background-color: #fff;
 	-webkit-border-radius: 3px 3px 0 0;
 	-moz-border-radius: 3px 3px 0 0;
@@ -199,7 +249,7 @@ body {
 }
 
 .annotator-touch-editor .annotator-item-quote {
-	font-size: 14px;
+	font-size: 16px;
 	line-height: 1.2;
 	border-color: #cebfa2;
 	background-color: #fbfae9;
@@ -223,7 +273,7 @@ body {
 }
 
 .annotator-item-quote button {
-	font-size: 12px;
+	font-size: 14px;
 	line-height: 44px;
 	margin-top: -13px;
 	float: right;
@@ -235,3 +285,36 @@ body {
 	margin-left: 10px;
 	cursor: pointer;
 }
+
+@media only screen and (max-width: 480px) {
+	.annotator-touch-editor {
+		-webkit-box-align: start;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget {
+		width: 100%;
+		max-width: auto;
+		margin: 0;
+		border: 0;
+		-webkit-box-shadow: none;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget-inner {
+		width: 100%;
+		max-width: auto;
+		margin: 0;
+		border: 0;
+	}
+
+	.annotator-touch-editor .annotator-controls {
+		border-bottom: 1px solid #D4D4D4;
+	}
+
+	.annotator-touch-editor .annotator-touch-widget,
+	.annotator-touch-editor .annotator-touch-widget-inner,
+	.annotator-touch-editor .annotator-touch-widget .annotator-item:first-child textarea,
+	.annotator-touch-editor .annotator-controls {
+		border-radius: 0;
+	}
+}
+
