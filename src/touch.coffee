@@ -46,7 +46,12 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # Unbind mouse events from the root element to prevent the iPad giving
     # it a grey selected outline when interacted with.
     @element.unbind("click mousedown mouseover mouseout")
-    @element.delegate(".annotator-hl", "touchstart", @annotator.onHighlightMouseover)
+    @element.delegate ".annotator-hl", "tap", (event) =>
+      original = event.originalEvent
+      if original and original.touches
+        event.pageX = original.touches[0].pageX
+        event.pageY = original.touches[0].pageY
+      @annotator.onHighlightMouseover(event)
 
     @annotator.adder.remove()
     @annotator.editor.on "hide", @_watchForSelection
@@ -81,13 +86,12 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
   _setupControls: ->
     @controls = jQuery(@template).appendTo("body")
-    @controls.delegate(".annotator-touch-toggle", "click", @_onToggleTap)
-    @controls.delegate(".annotator-touch-toggle", "touchstart", @_onToggleTap)
 
     @adder = @controls.find(".annotator-add")
-    @adder.bind(touchstart: @_onAdderTap, mousedown: @_onAdderTap)
+    @adder.bind(tap: @_onAdderTap)
 
     @toggle = @controls.find(".annotator-touch-toggle")
+    @toggle.bind("tap": @_onToggleTap)
     @toggle.hide() unless @options.useHighlighter
 
   _watchForSelection: =>
@@ -98,7 +102,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       progress = (new Date().getTime()) - start
       if progress > 1000 / 60
         start = new Date().getTime()
-        @_checkSelection()
+        @_checkSelection() 
       @timer = @utils.requestAnimationFrame.call(window, step)
     @timer = @utils.requestAnimationFrame.call(window, step)
 
@@ -139,6 +143,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       @_clearWatchForSelection()
       browserRange = new Annotator.Range.BrowserRange(@range)
       range = browserRange.normalize().limit(@element[0])
+
       if browserRange
         annotation = @annotator.createAnnotation()
         annotation.quote = @range.toString()
