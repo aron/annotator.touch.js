@@ -3,8 +3,9 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
   _t = Annotator._t
 
   events:
-    ".annotator-save touchstart":   "_onSubmit"
-    ".annotator-cancel touchstart": "_onCancel"
+    "click": "_onOverlayTap"
+    ".annotator-save tap":   "_onSubmit"
+    ".annotator-cancel tap": "_onCancel"
 
   classes:
     expand: "annotator-touch-expand"
@@ -78,13 +79,5 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
     event.preventDefault()
     @editor.hide()
 
-  _onClick: (event) ->
+  _onOverlayTap: (event) =>
     @editor.hide() if event.target is @element[0]
-
-  _onTapStart: (event) =>
-    @_tapdown = null
-    @_tapdown = event if event.target and event.target is @element[0]
-
-  _onTapEnd: (event) =>
-    tap = @_tapdown
-    @editor.hide() if tap and event.target is tap.target and tap.pageY is event.pageY and tap.pageX is event.pageX
