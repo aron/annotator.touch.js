@@ -230,6 +230,18 @@ body {
 	margin-left: 6px;
 }
 
+.annotator-viewer .annotator-touch-controls .annotator-edit::after {
+	background-image: url(../images/icon-sprite.png);
+	background-position: 0 -15px;
+}
+
+.annotator-viewer .annotator-touch-controls .annotator-edit:hover::after,
+.annotator-viewer .annotator-touch-controls .annotator-edit:focus::after,
+.annotator-viewer .annotator-touch-controls .annotator-edit:active::after,
+.annotator-viewer .annotator-touch-controls .annotator-edit.annotator-focus::after {
+	background-position: 0 -30px;
+}
+
 [data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button {
 	padding-left: 25px;
 	text-indent: -9000em;
