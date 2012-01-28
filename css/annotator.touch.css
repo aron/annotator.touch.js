@@ -161,7 +161,15 @@ body {
 	left: 20px;
 }
 
+.annotator-hide {
+	display: block;
+}
+
 .annotator-viewer .annotator-widget {
+	min-width: 380px;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-widget {
 	min-width: 320px;
 }
 
@@ -171,8 +179,68 @@ body {
 
 .annotator-viewer div:first-of-type {
 	font-size: 18px;
-	padding-top: 14px;
-	padding-bottom: 14px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.annotator-viewer .annotator-touch-controls {
+	top: 0;
+	position: absolute;
+	left: auto;
+	right: 0;
+	display: none;
+	background: rgba(255, 255, 255, 0.6);
+	background: -webkit-gradient(
+		linear, right top, left top,
+		from(rgba(255, 255, 255, 0.8)),
+		color-stop(0.9, rgba(255, 255, 255, 0.8)),
+		to(rgba(255, 255, 255, 0))
+	);
+	background: -moz-linear-gradient(
+		0deg,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	background: -webkit-linear-gradient(
+		0deg,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	background: linear-gradient(
+		0deg,
+		from(rgba(255, 255, 255, 0.8)) 90%,
+		to(rgba(255, 255, 255, 0))
+	);
+	-webkit-box-pack: end;
+	-webkit-box-align: center;
+	-webkit-box-orient: horizontal;
+	padding: 10px;
+	bottom: 0;
+	padding: 0 10px 0 20px;
+}
+
+.annotator-viewer li:hover .annotator-touch-controls {
+	display: -webkit-box;
+}
+
+.annotator-viewer .annotator-touch-controls button {
+	line-height: 44px;
+	padding-left: 40px;
+	padding-right: 20px;
+	margin-left: 6px;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button {
+	padding-left: 25px;
+	text-indent: -9000em;
+}
+
+.annotator-viewer .annotator-touch-controls button::after {
+	left: 15px;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button::after {
+	left: 15px;
 }
 
 .annotator-touch-editor {

@@ -60,7 +60,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
           event.pageY = original.touches[0].pageY
 
         @annotator.viewer.hide() if @annotator.viewer.isShown()
-        @annotator.clearViewerHideTimer()
+        @annotator.onHighlightMouseover(event)
 
         jQuery(document).bind("tap", onDocTap)
 
@@ -68,6 +68,16 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       unless @annotator.isAnnotator(event.target)
         @annotator.viewer.hide()
         jQuery(document).unbind "tap", onDocTap
+
+    @annotator.element.unbind("click")
+    @annotator.viewer.element.addClass("annotator-touch-widget")
+    @annotator.viewer.element.delegate ".annotator-edit", "tap", @annotator.viewer.onEditClick
+    @annotator.viewer.element.delegate ".annotator-delete", "tap", @annotator.viewer.onDeleteClick
+
+    @annotator.viewer.on "load", =>
+      controls = @annotator.viewer.element.find(".annotator-controls")
+      controls.toggleClass("annotator-controls annotator-touch-controls")
+      controls.find("button").addClass("annotator-button")
 
     @annotator.adder.remove()
     @annotator.editor.on "hide", @_watchForSelection
