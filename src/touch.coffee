@@ -1,5 +1,7 @@
 Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
+  jQuery = Annotator.$
+
   @states: ON: "on", OFF: "off"
 
   template: """
@@ -46,12 +48,26 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # Unbind mouse events from the root element to prevent the iPad giving
     # it a grey selected outline when interacted with.
     @element.unbind("click mousedown mouseover mouseout")
-    @element.delegate ".annotator-hl", "tap", (event) =>
-      original = event.originalEvent
-      if original and original.touches
-        event.pageX = original.touches[0].pageX
-        event.pageY = original.touches[0].pageY
-      @annotator.onHighlightMouseover(event)
+
+    # Bind tap event listeners to the highlight elements. We delegate to the
+    # document rather than the container to prevent WebKit requiring a
+    # double tap to bring up the text selection tool.
+    jQuery(document).delegate ".annotator-hl", "tap", (event) =>
+      if jQuery.contains(@element[0], event.target)
+        original = event.originalEvent
+        if original and original.touches
+          event.pageX = original.touches[0].pageX
+          event.pageY = original.touches[0].pageY
+
+        @annotator.viewer.hide() if @annotator.viewer.isShown()
+        @annotator.clearViewerHideTimer()
+
+        jQuery(document).bind("tap", onDocTap)
+
+    onDocTap = (event) =>
+      unless @annotator.isAnnotator(event.target)
+        @annotator.viewer.hide()
+        jQuery(document).unbind "tap", onDocTap
 
     @annotator.adder.remove()
     @annotator.editor.on "hide", @_watchForSelection
