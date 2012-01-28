@@ -14,13 +14,19 @@ class Annotator.Plugin.Touch.Viewer extends Annotator.Delegator
 
     @on("load", @_onLoad)
 
+  hideAllControls: ->
+    @element.find(".annotator-item").removeClass(@viewer.classes.showControls)
+
   _onLoad: =>
     controls = @element.find(".annotator-controls")
     controls.toggleClass("annotator-controls annotator-touch-controls")
     controls.find("button").addClass("annotator-button")
 
   _onTap: (event) ->
-    jQuery(event.currentTarget).toggleClass(@viewer.classes.showControls)
+    target = jQuery(event.currentTarget)
+    isVisible = target.hasClass(@viewer.classes.showControls)
+    @hideAllControls()
+    target.addClass(@viewer.classes.showControls) unless isVisible
 
   _onEdit: (event) ->
     event.preventDefault()
