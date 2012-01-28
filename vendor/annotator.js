@@ -620,7 +620,11 @@
       this.viewer = new Annotator.Viewer();
       this.viewer.hide().on("edit", this.onEditAnnotation).on("delete", this.onDeleteAnnotation).addField({
         load: function(field, annotation) {
-          $(field).escape(annotation.text || '');
+          if (annotation.text) {
+            $(field).escape(annotation.text);
+          } else {
+            $(field).html("<i>" + (_t('No Comment')) + "</i>");
+          }
           return _this.publish('annotationViewerTextField', [field, annotation]);
         }
       }).element.appendTo(this.wrapper).bind({
