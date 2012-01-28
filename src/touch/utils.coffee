@@ -1,31 +1,34 @@
 jQuery.event.special.tap =
-  add: (data) ->
+  add: (eventHandler) ->
+    data = eventHandler.data = eventHandler.data or {}
     context = this
 
     onTapStart = (event) ->
-      event.preventDefault() if event.target is context
+      event.preventDefault() unless data.preventDefault is false
+
       data.event = event
       data.touched = setTimeout ->
         data.touched = null
       , 300
+
       jQuery(document).bind touchend: onTapEnd, mouseup: onTapEnd
 
     onTapEnd = (event) ->
       if data.touched
         clearTimeout(data.touched)
-        jQuery(document).unbind touchstart: onTapEnd, mousedown: onTapEnd
         if event.target is context or jQuery.contains(context, event.target)
-          data.handler.call(this, data.event)
+          eventHandler.handler.call(this, data.event)
         data.touched = null
+      jQuery(document).unbind touchstart: onTapEnd, mousedown: onTapEnd
 
     data.tapHandlers = touchstart: onTapStart, mousedown: onTapStart
-    if data.selector
-      jQuery(context).delegate data.selector, data.tapHandlers
+    if eventHandler.selector
+      jQuery(context).delegate eventHandler.selector, data.tapHandlers
     else
       jQuery(context).bind data.tapHandlers
 
-  remove: (data) ->
-    jQuery(this).unbind data.tapHandlers
+  remove: (eventHandler) ->
+    jQuery(this).unbind eventHandler.data.tapHandlers
 
 # Add support for "touch" events.
 Annotator.Delegator.natives.push("touchstart", "touchmove", "touchend", "tap")
