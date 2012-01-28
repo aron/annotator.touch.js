@@ -219,7 +219,7 @@ body {
 	padding: 0 10px 0 20px;
 }
 
-.annotator-viewer li:hover .annotator-touch-controls {
+.annotator-viewer li.annotator-visible .annotator-touch-controls {
 	display: -webkit-box;
 }
 

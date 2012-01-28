@@ -44,6 +44,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         highlightStyles: true
 
     @editor = new Touch.Editor(@annotator.editor)
+    @viewer = new Touch.Viewer(@annotator.viewer)
 
     # Unbind mouse events from the root element to prevent the iPad giving
     # it a grey selected outline when interacted with.
@@ -53,7 +54,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # document rather than the container to prevent WebKit requiring a
     # double tap to bring up the text selection tool.
     jQuery(document).delegate ".annotator-hl", "tap", (event) =>
-      if jQuery.contains(@element[0], event.target)
+      if @element.has(event.currentTarget)
         original = event.originalEvent
         if original and original.touches
           event.pageX = original.touches[0].pageX
@@ -62,22 +63,13 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         @annotator.viewer.hide() if @annotator.viewer.isShown()
         @annotator.onHighlightMouseover(event)
 
-        jQuery(document).bind("tap", onDocTap)
+        jQuery(document).unbind("tap", onDocTap)
+        jQuery(document).bind("tap", preventDefault: false, onDocTap)
 
     onDocTap = (event) =>
       unless @annotator.isAnnotator(event.target)
         @annotator.viewer.hide()
         jQuery(document).unbind "tap", onDocTap
-
-    @annotator.element.unbind("click")
-    @annotator.viewer.element.addClass("annotator-touch-widget")
-    @annotator.viewer.element.delegate ".annotator-edit", "tap", @annotator.viewer.onEditClick
-    @annotator.viewer.element.delegate ".annotator-delete", "tap", @annotator.viewer.onDeleteClick
-
-    @annotator.viewer.on "load", =>
-      controls = @annotator.viewer.element.find(".annotator-controls")
-      controls.toggleClass("annotator-controls annotator-touch-controls")
-      controls.find("button").addClass("annotator-button")
 
     @annotator.adder.remove()
     @annotator.editor.on "hide", @_watchForSelection
@@ -103,6 +95,16 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   isAnnotating: ->
     usingHighlighter = @options.useHighlighter
     not usingHighlighter or @toggle.attr("data-state") is Touch.states.ON
+
+  createAnnotation: (range, quote) ->
+    @annotator.selectedRanges = [range]
+    annotation = @annotator.createAnnotation()
+    annotation.quote = quote if quote
+    annotation
+
+  showEditor: (annotation) ->
+    @annotator.showEditor(annotation, {})
+    @hideControls()
 
   showControls: ->
     @controls.removeClass(@classes.hide)
@@ -170,14 +172,10 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       browserRange = new Annotator.Range.BrowserRange(@range)
       range = browserRange.normalize().limit(@element[0])
 
-      if browserRange
-        annotation = @annotator.createAnnotation()
-        annotation.quote = @range.toString()
-
-        @annotator.ignoreMouseup = true
-        @annotator.selectedRanges = [range]
-        @annotator.showEditor(annotation, top: 0, left: 0)
-        @hideControls()
+      if browserRange and not @annotator.isAnnotator(range.commonAncestor)
+        annotation = @createAnnotation(range, @range.toString())
+        @showEditor(annotation)
+        @annotator.onAdderMousedown()
 
   isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
