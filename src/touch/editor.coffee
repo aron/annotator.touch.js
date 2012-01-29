@@ -1,6 +1,6 @@
 class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
-  jQuery = Annotator.$
   _t = Annotator._t
+  jQuery = Annotator.$
 
   events:
     "click": "_onOverlayTap"
@@ -12,7 +12,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
 
   templates:
     quote: """
-    <button>#{_t("expand")}</button>
+    <button>""" + _t("expand") + """</button>
     <span class="quote"></span>
     """
 
