@@ -75,6 +75,7 @@
 }
 
 .annotator-touch-widget .annotator-button {
+	cursor: pointer;
 	font-size: 16px;
 	line-height: 44px;
 	padding-left: 40px;
@@ -91,6 +92,7 @@
 
 .annotator-touch-widget .annotator-button[disabled] {
 	opacity: 0.3;
+	cursor: default;
 }
 
 .annotator-touch-widget .annotator-button::after {
@@ -377,6 +379,8 @@
 	margin-left: -22px;
 	margin-top: -22px;
 	border-radius: 50%;
+	/* Removes the tap outline on elements that have bound touch events */
+	-webkit-tap-highlight-color: transparent;
 }
 
 .annotator-selection-handle::after {
