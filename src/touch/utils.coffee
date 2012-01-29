@@ -5,6 +5,7 @@ jQuery.event.special.tap =
 
     onTapStart = (event) ->
       event.preventDefault() unless data.preventDefault is false
+      data.onTapDown.apply(this, arguments) if data.onTapDown
 
       data.event = event
       data.touched = setTimeout ->
@@ -19,6 +20,9 @@ jQuery.event.special.tap =
         if event.target is context or jQuery.contains(context, event.target)
           eventHandler.handler.call(this, data.event)
         data.touched = null
+
+      data.onTapUp.apply(this, arguments) if data.onTapUp
+
       jQuery(document).unbind touchstart: onTapEnd, mousedown: onTapEnd
 
     data.tapHandlers = touchstart: onTapStart, mousedown: onTapStart
