@@ -1,5 +1,5 @@
 Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
-
+  _t = Annotator._t
   jQuery = Annotator.$
 
   @states: ON: "on", OFF: "off"
@@ -7,8 +7,8 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   template: """
   <div class="annotator-touch-widget annotator-touch-controls annotator-touch-hide">
     <div class="annotator-touch-widget-inner">
-      <a class="annotator-button annotator-add annotator-focus">Annotate</a>
-      <a class="annotator-button annotator-touch-toggle" data-state="off">Start Annotating</a>
+      <a class="annotator-button annotator-add annotator-focus">""" + _t("Annotate") + """</a>
+      <a class="annotator-button annotator-touch-toggle" data-state="off">""" + _t("Start Annotating") + """</a>
     </div>
   </div>
   """
@@ -72,7 +72,21 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         jQuery(document).unbind "tap", onDocTap
 
     @annotator.adder.remove()
-    @annotator.editor.on "hide", @_watchForSelection
+
+    @annotator.editor.on "show", =>
+      @highlighter.disable() if @highlighter
+
+    @annotator.viewer.on "show", =>
+      @highlighter.disable() if @highlighter
+      window.getSelection().removeAllRanges()
+
+    @annotator.editor.on "hide", =>
+      @_watchForSelection()
+      @highlighter.enable() if @highlighter
+      window.getSelection().removeAllRanges()
+
+    @annotator.viewer.on "hide", =>
+      @highlighter.enable() if @highlighter and @editor.element.hasClass(@editor.classes.hide)
 
     @on "selection", @_onSelection
     @_watchForSelection()
@@ -116,7 +130,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     @controls = jQuery(@template).appendTo("body")
 
     @adder = @controls.find(".annotator-add")
-    @adder.bind(tap: @_onAdderTap)
+    @adder.bind("tap", (onTapDown: (event) -> event.stopPropagation()), @_onAdderTap)
 
     @toggle = @controls.find(".annotator-touch-toggle")
     @toggle.bind("tap": @_onToggleTap)
