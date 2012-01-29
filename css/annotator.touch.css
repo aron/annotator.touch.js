@@ -1,83 +1,41 @@
-body {
-  font-size: 1.6em;
-}
+/* Images */
 
-.annotator-selection-handle {
-  cursor: pointer;
-  display: block;
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  top: 0;
-  left: 0;
-  padding: 0;
-  margin-left: -22px;
-  margin-top: -22px;
-  border-radius: 50%;
+.annotator-viewer .annotator-touch-controls .annotator-edit::after {
+	/* Assign the image once to ensure data uri is not repeated. */
+	background-image: url(../images/icon-sprite.png);
 }
 
 .annotator-selection-handle::after {
-  content: "";
-  display: block;
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  left: 50%;
-  margin-left: -10px;
-  bottom: -5px;
-  background: url(../images/handle.png) no-repeat 0 0;
+  background-image: url(../images/handle.png);
 }
 
-.annotator-selection-start::after {
-  top: -5px;
-  bottom: auto;
-  background-position: 0 -20px;
-}
-
-.annotator-selection-hide .annotator-selection-handle {
-  display: none;
-}
-
-.annotator-touch-controls {
-	position: fixed;
-	bottom: 15px;
-	right: 15px;
-	min-width: auto;
-}
-
-.annotator-touch-controls.annotator-touch-hide {
-	right: -9999em;
-	opacity: 0;
-	-webkit-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
-}
-
+/* Generic Touch Widget Styles */
 .annotator-touch-widget {
-	/*-webkit-tap-highlight-color: transparent;*/
 	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 	border: 1px solid rgba(0, 0, 0, 0.8);
-	/*background-color: rgba(0, 0, 0, 0.85);*/
-	background-image: -webkit-gradient(
+	background: rgba(0, 0, 0, 0.85);
+	background: -webkit-gradient(
 		linear, left top, left bottom,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)),
 		color-stop(0.5, rgba(0, 0, 0, 0.85)),
 		to(rgba(0, 0, 0, 0.85))
 	);
-	background-image: -moz-linear-gradient(
+	background: -moz-linear-gradient(
 		-90deg,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)),
 		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
 		to(rgba(0, 0, 0, 0.85))
 	);
-	background-image: -webkit-linear-gradient(
+	background: -webkit-linear-gradient(
 		-90deg,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
 		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
 		to(rgba(0, 0, 0, 0.85))
 	);
-	background-image: linear-gradient(
+	background: linear-gradient(
 		-90deg,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
@@ -90,6 +48,12 @@ body {
 	-o-border-radius: 4px;
 	border-radius: 4px;
 	-webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-ms-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-o-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	/* Removes the tap outline on elements that have bound touch events */
+	-webkit-tap-highlight-color: transparent;
 }
 
 .annotator-touch-widget-inner {
@@ -125,28 +89,12 @@ body {
 	user-select: none;
 }
 
-[data-annotator-use-icons] .annotator-touch-widget .annotator-button {
-	/* width & overflow is required by Android WebKit */
-	width: 1px;
-	overflow: hidden;
-	text-indent: -999em;
-	padding-left: 25px;
-}
-
 .annotator-touch-widget .annotator-button[disabled] {
 	opacity: 0.3;
 }
 
 .annotator-touch-widget .annotator-button::after {
 	left: 15px;
-}
-
-.annotator-touch-controls .annotator-button {
-	line-height: 56px;
-}
-
-[data-annotator-use-icons] .annotator-touch-controls .annotator-button {
-	padding-left: 35px;
 }
 
 .annotator-touch-widget .annotator-add::after,
@@ -157,20 +105,33 @@ body {
 	background-position: 0 -270px;
 }
 
-[data-annotator-use-icons] .annotator-touch-controls .annotator-button::after {
-	left: 20px;
+/* Adder Styles */
+
+.annotator-touch-controls {
+	position: fixed;
+	bottom: 15px;
+	right: 15px;
+	min-width: auto;
 }
 
-.annotator-hide {
-	display: block;
+.annotator-touch-controls.annotator-touch-hide {
+	right: -9999em;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-moz-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-ms-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	-o-transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
+	transition: opacity 0.2s 0 ease-in, right 0s 0.3s linear;
 }
+
+.annotator-touch-controls .annotator-button {
+	line-height: 56px;
+}
+
+/* Viewer Overrides*/
 
 .annotator-viewer .annotator-widget {
 	min-width: 380px;
-}
-
-[data-annotator-use-icons] .annotator-viewer .annotator-widget {
-	min-width: 320px;
 }
 
 .annotator-viewer div {
@@ -184,8 +145,8 @@ body {
 }
 
 .annotator-viewer .annotator-touch-controls {
-	top: 0;
 	position: absolute;
+	top: 0;
 	left: auto;
 	right: 0;
 	display: none;
@@ -214,6 +175,12 @@ body {
 	-webkit-box-pack: end;
 	-webkit-box-align: center;
 	-webkit-box-orient: horizontal;
+	-moz-box-pack: end;
+	-moz-box-align: center;
+	-moz-box-orient: horizontal;
+	box-pack: end;
+	box-align: center;
+	box-orient: horizontal;
 	padding: 10px;
 	bottom: 0;
 	padding: 0 10px 0 20px;
@@ -221,6 +188,8 @@ body {
 
 .annotator-viewer li.annotator-visible .annotator-touch-controls {
 	display: -webkit-box;
+	display: -moz-box;
+	display: box;
 }
 
 .annotator-viewer .annotator-touch-controls button {
@@ -231,7 +200,6 @@ body {
 }
 
 .annotator-viewer .annotator-touch-controls .annotator-edit::after {
-	background-image: url(../images/icon-sprite.png);
 	background-position: 0 -15px;
 }
 
@@ -242,18 +210,11 @@ body {
 	background-position: 0 -30px;
 }
 
-[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button {
-	padding-left: 25px;
-	text-indent: -9000em;
-}
-
 .annotator-viewer .annotator-touch-controls button::after {
 	left: 15px;
 }
 
-[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button::after {
-	left: 15px;
-}
+/* Editor Overrides */
 
 .annotator-touch-editor {
 	position: fixed;
@@ -263,11 +224,16 @@ body {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
-	display: -webkit-box;
-	position: fixed;
 	background: rgba(255, 255, 255, 0.6);
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
+	-moz-box-pack: center;
+	-moz-box-align: center
+	box-pack: center;
+	box-align: center
 }
 
 .annotator-touch-editor .annotator-touch-widget {
@@ -366,9 +332,83 @@ body {
 	cursor: pointer;
 }
 
+/* Icon only button styles */
+
+[data-annotator-use-icons] .annotator-touch-widget .annotator-button {
+	/* width & overflow is required by Android WebKit */
+	width: 1px;
+	overflow: hidden;
+	text-indent: -999em;
+	padding-left: 25px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button {
+	padding-left: 35px;
+}
+
+[data-annotator-use-icons] .annotator-touch-controls .annotator-button::after {
+	left: 20px;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button {
+	padding-left: 25px;
+	text-indent: -9000em;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-touch-controls button::after {
+	left: 15px;
+}
+
+[data-annotator-use-icons] .annotator-viewer .annotator-widget {
+	min-width: 320px;
+}
+
+/* Highlighter Selection Styles */
+
+.annotator-selection-handle {
+	cursor: pointer;
+	display: block;
+	position: absolute;
+	width: 44px;
+	height: 44px;
+	top: 0;
+	left: 0;
+	padding: 0;
+	margin-left: -22px;
+	margin-top: -22px;
+	border-radius: 50%;
+}
+
+.annotator-selection-handle::after {
+	content: "";
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-left: -10px;
+	bottom: -5px;
+	background-position: 0 0;
+	background-repeat: no-repeat;
+}
+
+.annotator-selection-start::after {
+  top: -5px;
+  bottom: auto;
+  background-position: 0 -20px;
+}
+
+.annotator-selection-hide .annotator-selection-handle {
+  display: none;
+}
+
+/* Styles for smaller screens */
+
 @media only screen and (max-width: 480px) {
 	.annotator-touch-editor {
 		-webkit-box-align: start;
+		-moz-box-align: start;
+		box-align: start;
 	}
 
 	.annotator-touch-editor .annotator-touch-widget {
@@ -377,6 +417,10 @@ body {
 		margin: 0;
 		border: 0;
 		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		-ms-box-shadow: none;
+		-o-box-shadow: none;
+		box-shadow: none;
 	}
 
 	.annotator-touch-editor .annotator-touch-widget-inner {
@@ -397,4 +441,3 @@ body {
 		border-radius: 0;
 	}
 }
-
