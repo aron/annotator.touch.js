@@ -18,7 +18,7 @@ jQuery.event.special.tap =
       if data.touched
         clearTimeout(data.touched)
         if event.target is context or jQuery.contains(context, event.target)
-          eventHandler.handler.call(this, data.event)
+          (eventHandler.origHandler or eventHandler.handler).call(this, data.event)
         data.touched = null
 
       data.onTapUp.apply(this, arguments) if data.onTapUp
