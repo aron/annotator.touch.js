@@ -46,6 +46,10 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     @editor = new Touch.Editor(@annotator.editor)
     @viewer = new Touch.Viewer(@annotator.viewer)
 
+    jQuery(document).unbind
+      "mouseup":   @annotator.checkForEndSelection
+      "mousedown": @annotator.checkForStartSelection
+
     # Unbind mouse events from the root element to prevent the iPad giving
     # it a grey selected outline when interacted with.
     @element.unbind("click mousedown mouseover mouseout")
@@ -73,6 +77,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
     @annotator.adder.remove()
     @annotator.editor.on "show", =>
+      @annotator.onAdderMousedown()
       @highlighter.disable() if @highlighter
 
     @annotator.viewer.on "show", =>
@@ -143,7 +148,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       progress = (new Date().getTime()) - start
       if progress > 1000 / 60
         start = new Date().getTime()
-        @_checkSelection() 
+        @_checkSelection()
       @timer = @utils.requestAnimationFrame.call(window, step)
     @timer = @utils.requestAnimationFrame.call(window, step)
 
@@ -159,15 +164,25 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     if selection.rangeCount and string isnt @selectionString
       @range = selection.getRangeAt(0)
       @selectionString = string
-    
+
     if selection.rangeCount is 0 or (@range and @range.collapsed)
       @range = null
       @selectionString = ""
 
     @publish("selection", [@range]) unless @selectionString is previous
 
+  _isValidSelection: (range) ->
+    element  = @element[0]
+    contains = jQuery.contains
+
+    isStartOffsetValid = range.startOffset < range.startContainer.length
+    isValidStart = isStartOffsetValid and contains(element, range.startContainer)
+    isValidEnd = range.endOffset > 0 and contains(element, range.endContainer)
+
+    isValidStart or isValidEnd
+
   _onSelection: =>
-    if @isAnnotating() and @range
+    if @isAnnotating() and @range and @_isValidSelection(@range)
       @adder.removeAttr("disabled")
       @showControls()
     else
@@ -185,10 +200,9 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       browserRange = new Annotator.Range.BrowserRange(@range)
       range = browserRange.normalize().limit(@element[0])
 
-      if browserRange and not @annotator.isAnnotator(range.commonAncestor)
+      if range and not @annotator.isAnnotator(range.commonAncestor)
         annotation = @createAnnotation(range, @range.toString())
         @showEditor(annotation)
-        @annotator.onAdderMousedown()
 
   isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
