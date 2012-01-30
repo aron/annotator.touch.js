@@ -28,7 +28,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
     @element.undelegate("textarea", "keydown")
 
     @on "hide", => @element.find(":focus").blur()
-    @on "show", => @element.offset(top: 0, left: 0)
+    @on "show", => @element.css(top: 0, left: 0)
 
     @quote = jQuery @editor.addField
       id: 'quote'
