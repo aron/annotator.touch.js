@@ -409,7 +409,34 @@
 /* Styles for smaller screens */
 
 @media only screen and (max-width: 480px) {
+	.annotator-viewer {
+		left: 0 !important;
+		width: 100%;
+		background: none;
+		min-width: 0;
+		border: none;
+	}
+
+	.annotator-viewer .annotator-widget {
+		position: static;
+		left: 0;
+		width: 100%;
+		height: auto;
+		min-width: 0;
+		-webkit-box-sizing: border-box;
+		-webkit-border-radius: none;
+		border-radius: none;
+	}
+
+	.annotator-viewer .annotator-widget::after {
+		display: none;
+	}
+
 	.annotator-touch-editor {
+		border: none;
+		top: -500px !important;
+		left: 0 !important;
+		padding: 500px 0;
 		-webkit-box-align: start;
 		-moz-box-align: start;
 		box-align: start;
@@ -419,7 +446,9 @@
 		width: 100%;
 		max-width: auto;
 		margin: 0;
-		border: 0;
+		border-color: #333;
+		border-left: none;
+		border-right: none;
 		-webkit-box-shadow: none;
 		-moz-box-shadow: none;
 		-ms-box-shadow: none;
