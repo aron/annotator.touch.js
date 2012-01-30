@@ -57,8 +57,10 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # Bind tap event listeners to the highlight elements. We delegate to the
     # document rather than the container to prevent WebKit requiring a
     # double tap to bring up the text selection tool.
-    jQuery(document).delegate ".annotator-hl", "tap", (event) =>
-      if @element.has(event.currentTarget)
+    jQuery(document).delegate ".annotator-hl", "tap", preventDefault: false, (event) =>
+      return if jQuery(event.currentTarget).parents("a, [annotator-clickable]").length
+
+      if jQuery.contains(@element[0], event.currentTarget)
         original = event.originalEvent
         if original and original.touches
           event.pageX = original.touches[0].pageX
@@ -175,9 +177,12 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     element  = @element[0]
     contains = jQuery.contains
 
+    # jQuery.contains() doesn't appear to work with range nodes.
+    inElement = (node) -> jQuery(node).parents('.annotator-wrapper').length
+
     isStartOffsetValid = range.startOffset < range.startContainer.length
-    isValidStart = isStartOffsetValid and contains(element, range.startContainer)
-    isValidEnd = range.endOffset > 0 and contains(element, range.endContainer)
+    isValidStart = isStartOffsetValid and inElement(range.startContainer)
+    isValidEnd = range.endOffset > 0 and inElement(range.endContainer)
 
     isValidStart or isValidEnd
 
