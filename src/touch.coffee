@@ -73,6 +73,14 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
     @annotator.adder.remove()
 
+    # Monkey patch the showEditor() method to always position the annotation
+    # in the top left. This sadly cannot be achieved by setting the position
+    # in the "show" event as the iPad does not recenter the form after it
+    # has moved.
+    @annotator._showEditor = @annotator.showEditor
+    @annotator.showEditor = (annotation) =>
+      @annotator._showEditor.call(this, top: 0, left: 0)
+
     @annotator.editor.on "show", =>
       @highlighter.disable() if @highlighter
 

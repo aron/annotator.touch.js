@@ -26,9 +26,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
 
     # Remove the "return to submit" listener.
     @element.undelegate("textarea", "keydown")
-
     @on "hide", => @element.find(":focus").blur()
-    @on "show", => @element.css(top: 0, left: 0)
 
     @quote = jQuery @editor.addField
       id: 'quote'
