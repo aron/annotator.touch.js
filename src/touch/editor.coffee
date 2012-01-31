@@ -19,7 +19,6 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
   constructor: (@editor, options) ->
     super @editor.element[0], options
     @element.addClass("annotator-touch-editor")
-
     @element.wrapInner('<div class="annotator-touch-widget" />')
     @element.find("form").addClass("annotator-touch-widget-inner")
     @element.find(".annotator-controls a").addClass("annotator-button")
@@ -38,6 +37,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
     @quote.empty().addClass("annotator-item-quote")
     @quote.append(@templates.quote)
     @quote.find("button").click(@_onExpandClick)
+    @_setupAndroidRedrawHack()
 
   showQuote: ->
     @quote.addClass(@classes.expand)
@@ -51,6 +51,20 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
 
   isQuoteHidden: ->
     not @quote.hasClass(@classes.expand)
+
+  _setupAndroidRedrawHack: ->
+    if window.navigator.userAgent.match(/Android/i)
+      timer = null
+      check = => timer = null; @_triggerAndroidRedraw()
+      jQuery(window).bind "scroll", ->
+        timer = setTimeout(check, 100) unless timer
+
+  _triggerAndroidRedraw: =>
+    @_input   = @element.find(":input:first") unless @_input
+    @_default = parseFloat(@_input.css "padding-top") unless @_default
+    @_multiplier = (@_multiplier or 1) * -1
+    @_input[0].style.paddingTop = (@_default + @_multiplier) + "px"
+    @_input[0].style.paddingTop = (@_default - @_multiplier) + "px"
 
   _isTruncated: ->
     isHidden = @isQuoteHidden()
