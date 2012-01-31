@@ -58,7 +58,9 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # document rather than the container to prevent WebKit requiring a
     # double tap to bring up the text selection tool.
     jQuery(document).delegate ".annotator-hl", "tap", preventDefault: false, (event) =>
-      return if jQuery(event.currentTarget).parents("a, [annotator-clickable]").length
+      clickable = jQuery(event.currentTarget).parents().filter ->
+        jQuery(this).is('a, [annotator-clickable]')
+      return if clickable.length
 
       if jQuery.contains(@element[0], event.currentTarget)
         original = event.originalEvent
