@@ -4,10 +4,11 @@ libc = new FFI.Library(null, "system": ["int32", ["string"]])
 run  = libc.system
 
 VERSION = "0.1.0"
-OUTPUT  = "pkg/annotator.touch.min.js"
-STYLES  = "pkg/annotator.touch.css"
-COFFEE  = "node_modules/.bin/coffee"
-UGLIFY  = "node_modules/.bin/uglifyjs"
+PACKAGE = "annotator.touch"
+OUTPUT  = "pkg/#{PACKAGE}.min.js"
+STYLES  = "pkg/#{PACKAGE}.css"
+COFFEE  = "`npm bin`/coffee"
+UGLIFY  = "`npm bin`/uglifyjs"
 HEADER  = """
 /*  Touch Annotator Plugin - v#{VERSION}
  *  Copyright 2012, Compendio
@@ -23,20 +24,20 @@ task "serve", "Serve the current directory", ->
 task "test", "Open the test suite in the browser", ->
   run "open http://localhost:8000/test/index.html"
 
-task "build", ->
-  run "mkdir -p pkg"
+option "", "--no-minify", "Do not minify build scripts with `cake build`"
+task "build", "Concatenates and minifies CSS & JS", (options) ->
+  MINIFY = if options['no-minify'] then "cat" else UGLIFY
+
   run """
-  echo "#{HEADER}" > #{OUTPUT} && 
+  mkdir -p pkg && echo "#{HEADER}" > #{OUTPUT} && 
   cat src/touch.coffee src/touch/*.coffee | 
-  #{COFFEE} --stdio --print | 
-  #{UGLIFY} >> #{OUTPUT} && 
-  echo "" >> #{OUTPUT}
+  #{COFFEE} --stdio --print | #{MINIFY} >> #{OUTPUT} && echo "" >> #{OUTPUT}
   """
   utils.inline ["css/annotator.touch.css"], STYLES
 
-task "pkg", ->
+task "pkg", "Creates a zip package with minified scripts", ->
   invoke "build"
-  run "zip -jJ annotator.touch.#{VERSION}.zip  #{OUTPUT} #{STYLES}"
+  run "zip -jJ #{PACKAGE}.#{VERSION}.zip #{OUTPUT} #{STYLES}"
 
 utils = 
   dataurlify: (css) ->
