@@ -28,7 +28,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     @document = jQuery(document)
 
   pluginInit: ->
-    return unless @options.force or @isTouchDevice()
+    return unless Annotator.supported() and (@options.force or Touch.isTouchDevice())
 
     @_setupControls()
 
@@ -59,7 +59,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     # double tap to bring up the text selection tool.
     jQuery(document).delegate ".annotator-hl", "tap", preventDefault: false, (event) =>
       clickable = jQuery(event.currentTarget).parents().filter ->
-        jQuery(this).is('a, [annotator-clickable]')
+        jQuery(this).is('a, [data-annotator-clickable]')
       return if clickable.length
 
       if jQuery.contains(@element[0], event.currentTarget)
@@ -147,10 +147,11 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   _watchForSelection: =>
     return if @timer
 
+    interval = if Touch.isAndroid() then 300 else 1000 / 60
     start = new Date().getTime()
     step = =>
       progress = (new Date().getTime()) - start
-      if progress > 1000 / 60
+      if progress > interval
         start = new Date().getTime()
         @_checkSelection()
       @timer = @utils.requestAnimationFrame.call(window, step)
@@ -211,5 +212,8 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         annotation = @createAnnotation(range, @range.toString())
         @showEditor(annotation)
 
-  isTouchDevice: ->
+  @isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
+
+  @isAndroid: ->
+    (/Android/i).test(window.navigator.userAgent)

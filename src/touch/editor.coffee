@@ -1,6 +1,7 @@
 class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
   _t = Annotator._t
   jQuery = Annotator.$
+  Touch  = Annotator.Plugin.Touch
 
   events:
     "click": "_onOverlayTap"
@@ -53,7 +54,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
     not @quote.hasClass(@classes.expand)
 
   _setupAndroidRedrawHack: ->
-    if window.navigator.userAgent.match(/Android/i)
+    if Touch.isAndroid()
       timer = null
       check = => timer = null; @_triggerAndroidRedraw()
       jQuery(window).bind "scroll", ->
