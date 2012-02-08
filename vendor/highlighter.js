@@ -682,9 +682,15 @@
      *
      * Returns nothing.
      */
-    _onHandleDown: function () {
+    _onHandleDown: function (event) {
       var position = this.getFirstPosition(event);
       if (position && this.selected) {
+        this._offset = {
+          y: position.y - parseFloat(event.target.style.top),
+          x: position.x - parseFloat(event.target.style.left)
+        };
+
+        
         this._startPosition = this._endPosition = position;
         this._isStartHandle = event.target === this.handles.start;
 
@@ -719,6 +725,10 @@
         if (this._startPosition) {
           position = this.getFirstPosition(event);
           if (position) {
+            position = {
+              y: position.y - this._offset.y,
+              x: position.x - this._offset.x
+            };
             this.updatePositionByHandle(position, this._isStartHandle);
           }
         }
@@ -738,6 +748,7 @@
       delete this._startPosition;
       delete this._endPosition;
       delete this._throttled;
+      delete this._offset;
 
       this.unbind(document, {
         mousemove: '_onHandleMove',
