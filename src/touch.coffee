@@ -1,9 +1,24 @@
+# Plugin for the Annotator to improve the experience on touch devices. In
+# general it wraps the Viewer and Editor elements and increases the hit area
+# of buttons. Getting the selected text is handled by polling the
+# getSelection() method on the window object. This is supported by most
+# devices that implement native text selection tools such as Safari on iOS.
+#
+# Examples
+#
+#   jQuery("#annotator").annotator().annotator('addPlugin', 'Touch');
+#
+# Returns a new instance of the Touch plugin.
 Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
+  # Export some useful globals into the class scope.
   _t = Annotator._t
   jQuery = Annotator.$
 
+  # States for the "data-state" property on the annotator-touch-controls
+  # element. ON means the annotattor is enabled. OFF is disabled.
   @states: ON: "on", OFF: "off"
 
+  # Template for the Touch annotator controls.
   template: """
   <div class="annotator-touch-widget annotator-touch-controls annotator-touch-hide">
     <div class="annotator-touch-widget-inner">
@@ -13,13 +28,30 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   </div>
   """
 
+  # Classes to be used to control the state.
   classes:
     hide: "annotator-touch-hide"
 
+  # Instance options can be used to configure the annotator at runtime.
   options:
+    # Forces the touch controls to be loaded into the page. This is useful
+    # for testing or if the annotator will always be used in a touch device
+    # (say when bundled into an application).
     force: false
+
+    # For devices that do not have support for accessing the browsers selected
+    # text this plugin supports the inclusion of the Highlighter library that
+    # goes someway to implementing these features in JavaScript.
     useHighlighter: false
 
+  # Initialises the plugin and sets up instance variables.
+  #
+  # element - The root Annotator element.
+  # options - An object of options for the plugin see @options.
+  #           force: Should force plugin on desktop (default: false).
+  #           useHighlighter: Should use Highlighter (default: false).
+  #
+  # Returns nothing.
   constructor: (element, options) ->
     super
 
@@ -27,6 +59,11 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     @selection = null
     @document = jQuery(document)
 
+  # Internal: Updates the plugin after the Annotator has been loaded and
+  # attached to the plugin instance. This should be used to register
+  # Editor and Viewer fields.
+  #
+  # Returns nothing.
   pluginInit: ->
     return unless Annotator.supported() and (@options.force or Touch.isTouchDevice())
 
@@ -34,7 +71,8 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
     # Only need this for some Android browsers at the moment. The simulator
     # fails to select the highlights but the Galaxy Tab running 3.2 works
-    # okay.
+    # okay. There is no way to feature detect whether or not the Highlighter
+    # should be used so it must be enabled with @options.useHighlighter.
     if @options.useHighlighter
       @showControls()
       @highlighter = new Highlighter
@@ -43,44 +81,142 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         enable: false
         highlightStyles: true
 
-    @editor = new Touch.Editor(@annotator.editor)
-    @viewer = new Touch.Viewer(@annotator.viewer)
-
-    jQuery(document).unbind
-      "mouseup":   @annotator.checkForEndSelection
-      "mousedown": @annotator.checkForStartSelection
-
-    # Unbind mouse events from the root element to prevent the iPad giving
-    # it a grey selected outline when interacted with.
-    @element.unbind("click mousedown mouseover mouseout")
-
     # Bind tap event listeners to the highlight elements. We delegate to the
     # document rather than the container to prevent WebKit requiring a
     # double tap to bring up the text selection tool.
-    jQuery(document).delegate ".annotator-hl", "tap", preventDefault: false, (event) =>
-      clickable = jQuery(event.currentTarget).parents().filter ->
-        jQuery(this).is('a, [data-annotator-clickable]')
-      return if clickable.length
+    @document.delegate(".annotator-hl", "tap", preventDefault: false, @_onHighlightTap)
 
-      if jQuery.contains(@element[0], event.currentTarget)
-        original = event.originalEvent
-        if original and original.touches
-          event.pageX = original.touches[0].pageX
-          event.pageY = original.touches[0].pageY
+    @subscribe("selection", @_onSelection)
 
-        @annotator.viewer.hide() if @annotator.viewer.isShown()
-        @annotator.onHighlightMouseover(event)
+    @_unbindAnnotatorEvents()
+    @_setupAnnotatorEvents()
+    @_watchForSelection()
 
-        jQuery(document).unbind("tap", onDocTap)
-        jQuery(document).bind("tap", preventDefault: false, onDocTap)
+  # Internal: Method for tearing down a plugin, removing all event listeners
+  # and timers etc that it has created. This should be called when the plugin
+  # is removed from the DOM.
+  #
+  # Examples
+  #
+  #   annotator.element.remove()
+  #   touch.pluginDestroy()
+  #
+  # Returns nothing.
+  pluginDestroy: ->
+    @adder.remove() if @adder
+    @highlighter.disable() if @highlighter
+    @annotator.editor.unsubscribe "hide", @_watchForSelection if @annotator
 
-    onDocTap = (event) =>
-      unless @annotator.isAnnotator(event.target)
-        @annotator.viewer.hide()
-        jQuery(document).unbind "tap", onDocTap
+  # Public: Enables the highlighter and the annotator button. This is only
+  # used when the highlighter is used to switch between JavaScript and
+  # Native text selection.
+  #
+  # Examples
+  #
+  #   touch.startAnnotating()
+  #
+  # Returns itself.
+  startAnnotating: ->
+    @highlighter.enable() if @highlighter
+    @toggle.attr("data-state", Touch.states.ON)
+    @toggle.html("Stop Annotating")
+    this
 
+  # Public: Disables the highlighter and the annotator button.
+  #
+  # Examples
+  #
+  #   touch.startAnnotating()
+  #
+  # Returns itself.
+  stopAnnotating: ->
+    @highlighter.disable() if @highlighter
+    @toggle.attr("data-state", Touch.states.OFF)
+    @toggle.html("Start Annotating")
+    this
+
+  # Public: Checks to see if the annotator is currently enabled.
+  #
+  # Examples
+  #
+  #   if touch.isAnnotating() then doSomething()
+  #
+  # Returns true if the annotator is enabled.
+  isAnnotating: ->
+    usingHighlighter = @options.useHighlighter
+    not usingHighlighter or @toggle.attr("data-state") is Touch.states.ON
+
+  # Creates a new annotion object for the provided NormalisedRange and
+  # optional quote. Including the quote is faster than using the
+  # NormalisedRange#text() method.
+  #
+  # range - A NormalisedRange created from a native Range object.
+  # quote - The string of text extracted from the selection.
+  #
+  # Examples
+  #
+  #   ann = touch.createAnnotation()
+  #   annotator.showEditor(ann)
+  #
+  # Returns an annotation object.
+  createAnnotation: (range, quote) ->
+    @annotator.selectedRanges = [range]
+    annotation = @annotator.createAnnotation()
+    annotation.quote = quote or range.text()
+    annotation
+
+  # Public: Shows the Editor and hides the Touch controls.
+  #
+  # annotation - An annotation object to load into the Editor.
+  #
+  # Returns itself.
+  showEditor: (annotation) ->
+    @annotator.showEditor(annotation, {})
+    @hideControls()
+    this
+
+  # Public: Displays the touch controls.
+  #
+  # Returns itself.
+  showControls: ->
+    @controls.removeClass(@classes.hide)
+    this
+
+  # Public: Hides the touch controls.
+  #
+  # Returns itself.
+  hideControls: ->
+    @controls.addClass(@classes.hide) unless @options.useHighlighter
+    this
+
+  # Sets up the touch controls and binds events, also removes the default
+  # adder. Should only be called in the @pluginInit() method.
+  #
+  # Returns nothing.
+  _setupControls: ->
     @annotator.adder.remove()
+
+    @controls = jQuery(@template).appendTo("body")
+
+    @adder = @controls.find(".annotator-add")
+    @adder.bind("tap", (onTapDown: (event) -> event.stopPropagation()), @_onAdderTap)
+
+    @toggle = @controls.find(".annotator-touch-toggle")
+    @toggle.bind("tap": @_onToggleTap)
+    @toggle.hide() unless @options.useHighlighter
+
+  # Setup method that creates the @editor and @viewer properties. Should
+  # only be called once by the @pluginInit() method.
+  #
+  # Returns nothing.
+  _setupAnnotatorEvents: ->
+    # Wrap the interface elements with touch controls.
+    @editor = new Touch.Editor(@annotator.editor)
+    @viewer = new Touch.Viewer(@annotator.viewer)
+
+    # Ensure the annotate buttom is hidden when the interface is visible.
     @annotator.editor.on "show", =>
+      @_clearWatchForSelection()
       @annotator.onAdderMousedown()
       @highlighter.disable() if @highlighter
 
@@ -96,71 +232,63 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
     @annotator.viewer.on "hide", =>
       @highlighter.enable() if @highlighter and @editor.element.hasClass(@editor.classes.hide)
 
-    @on "selection", @_onSelection
-    @_watchForSelection()
+  # Removes the default mouse event bindings created by the Annotator.
+  #
+  # Returns nothing.
+  _unbindAnnotatorEvents: ->
+    # Remove mouse events from document.
+    @document.unbind
+      "mouseup":   @annotator.checkForEndSelection
+      "mousedown": @annotator.checkForStartSelection
 
-  pluginDestroy: ->
-    @adder.remove() if @adder
-    @highlighter.disable() if @highlighter
-    @annotator.editor.unsubscribe "hide", @_watchForSelection if @annotator
+    # Unbind mouse events from the root element to prevent the iPad giving
+    # it a grey selected outline when interacted with.
+    # NOTE: This currently unbinds _all_ events event those set up by
+    # other plugins.
+    @element.unbind("click mousedown mouseover mouseout")
 
-  startAnnotating: ->
-    @highlighter.enable() if @highlighter
-    @toggle.attr("data-state", Touch.states.ON)
-    @toggle.html("Stop Annotating")
-
-  stopAnnotating: ->
-    @highlighter.disable() if @highlighter
-    @toggle.attr("data-state", Touch.states.OFF)
-    @toggle.html("Start Annotating")
-
-  isAnnotating: ->
-    usingHighlighter = @options.useHighlighter
-    not usingHighlighter or @toggle.attr("data-state") is Touch.states.ON
-
-  createAnnotation: (range, quote) ->
-    @annotator.selectedRanges = [range]
-    annotation = @annotator.createAnnotation()
-    annotation.quote = quote if quote
-    annotation
-
-  showEditor: (annotation) ->
-    @annotator.showEditor(annotation, {})
-    @hideControls()
-
-  showControls: ->
-    @controls.removeClass(@classes.hide)
-
-  hideControls: ->
-    @controls.addClass(@classes.hide) unless @options.useHighlighter
-
-  _setupControls: ->
-    @controls = jQuery(@template).appendTo("body")
-
-    @adder = @controls.find(".annotator-add")
-    @adder.bind("tap", (onTapDown: (event) -> event.stopPropagation()), @_onAdderTap)
-
-    @toggle = @controls.find(".annotator-touch-toggle")
-    @toggle.bind("tap": @_onToggleTap)
-    @toggle.hide() unless @options.useHighlighter
-
+  # Begins a timer stored in @timer that polls the page to see if a selection
+  # has been made. Clear the timer with @_clearWatchForSelection().
+  #
+  # Examples
+  #
+  #   jQuery(window).focus(touch._watchForSelection)
+  #
+  # Returns nothing.
   _watchForSelection: =>
     return if @timer
 
+    # There are occsions where Android will clear the text selection before
+    # firing touch events. So we slow down the polling to ensure that touch
+    # events get time to read the current selection.
     interval = if Touch.isAndroid() then 300 else 1000 / 60
     start = new Date().getTime()
+
+    # Use request animation frame despite the fact it runs to regularly to
+    # take advantage of the fact it stops running when the window is idle.
+    # If this becomes a performance bottleneck consider switching to a
+    # longer setTimeout() and managing the start/stop manually.
     step = =>
       progress = (new Date().getTime()) - start
       if progress > interval
         start = new Date().getTime()
         @_checkSelection()
       @timer = @utils.requestAnimationFrame.call(window, step)
-    @timer = @utils.requestAnimationFrame.call(window, step)
+    step()
 
+  # Clears the @timer that polls for selections in the document. Call this
+  # when the user is idle or selection is not required.
+  #
+  # Returns nothing.
   _clearWatchForSelection: ->
     @utils.cancelAnimationFrame.call(window, @timer)
     @timer = null
 
+  # Checks the current text selection and if changed fires the "selection"
+  # event with the currently selected Range object and the plugin instance
+  # passed in as an argument.
+  #
+  # Returns nothing.
   _checkSelection: ->
     selection = window.getSelection()
     previous  = @selectionString
@@ -174,12 +302,36 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
       @range = null
       @selectionString = ""
 
-    @publish("selection", [@range]) unless @selectionString is previous
+    @publish("selection", [@range, this]) unless @selectionString is previous
 
+  # Determines whether or not to show the annotator button depending on the
+  # current text selection.
+  #
+  # Examples
+  #
+  #   plugin.subscribe("selection", @_onSelection)
+  #
+  # Returns nothing.
+  _onSelection: =>
+    if @isAnnotating() and @range and @_isValidSelection(@range)
+      @adder.removeAttr("disabled")
+      @showControls()
+    else
+      @adder.attr("disabled", "")
+      @hideControls()
+
+  # Checks to see if any part of the provided Range object falls within the
+  # annotator element.
+  #
+  # range - A native Range instance.
+  #
+  # Examples
+  #
+  #   range = window.getSelectedText().rangeAt(0)
+  #   if touch._isValidSelection(range) then annotateText()
+  #
+  # Returns true if the annotator element contains selected nodes.
   _isValidSelection: (range) ->
-    element  = @element[0]
-    contains = jQuery.contains
-
     # jQuery.contains() doesn't appear to work with range nodes.
     inElement = (node) -> jQuery(node).parents('.annotator-wrapper').length
 
@@ -189,22 +341,24 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
     isValidStart or isValidEnd
 
-  _onSelection: =>
-    if @isAnnotating() and @range and @_isValidSelection(@range)
-      @adder.removeAttr("disabled")
-      @showControls()
-    else
-      @adder.attr("disabled", "")
-      @hideControls()
-
+  # Event callback for the Annotator Start/Stop button.
+  #
+  # event - A jQuery.Event touch event object.
+  #
+  # Returns nohting.
   _onToggleTap: (event) =>
     event.preventDefault()
     if @isAnnotating() then @stopAnnotating() else @startAnnotating()
 
+  # Event callback for the Annotate adder button. Checks the current selection
+  # and displays the editor.
+  #
+  # event - A jQuery.Event touch event object.
+  #
+  # Returns nothing.
   _onAdderTap: (event) =>
     event.preventDefault()
     if @range
-      @_clearWatchForSelection()
       browserRange = new Annotator.Range.BrowserRange(@range)
       range = browserRange.normalize().limit(@element[0])
 
@@ -212,8 +366,61 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         annotation = @createAnnotation(range, @range.toString())
         @showEditor(annotation)
 
+  # Event callback for tap events on highlights and displays the Viewer.
+  # Allows events on anchor elements and those with the 
+  # "data-annotator-clickable" attribute to pass through. Watches the
+  # document for further taps in order to remove the viewer.
+  #
+  # event - A jQuery.Event touch event object.
+  #
+  # Returns nothing.
+  _onHighlightTap: (event) =>
+    # Check to see if clicked element should be ignored.
+    clickable = jQuery(event.currentTarget).parents().filter ->
+      jQuery(this).is('a, [data-annotator-clickable]')
+    return if clickable.length
+
+    if jQuery.contains(@element[0], event.currentTarget)
+      original = event.originalEvent
+      if original and original.touches
+        event.pageX = original.touches[0].pageX
+        event.pageY = original.touches[0].pageY
+
+      @annotator.viewer.hide() if @annotator.viewer.isShown()
+      @annotator.onHighlightMouseover(event)
+
+      @document.unbind("tap", @_onDocumentTap)
+      @document.bind("tap", preventDefault: false, @_onDocumentTap)
+
+  # Event handler for document taps. This is used to hide the viewer when
+  # the document it tapped.
+  #
+  # event - A jQuery.Event touch event object.
+  #
+  # Returns nothing.
+  _onDocumentTap: (event) =>
+    unless @annotator.isAnnotator(event.target)
+      @annotator.viewer.hide()
+    @document.unbind("tap", @_onDocumentTap) unless @annotator.viewer.isShown()
+
+  # Public: Checks to see if the current device is capable of handling
+  # touch events.
+  #
+  # Examples
+  #
+  #   if Touch.isTouchDevice()
+  #     # Browser handles touch events.
+  #   else
+  #     # Browser does not handle touch events.
+  #
+  # Returns 
   @isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
 
+  # Public: Horrible browser sniffing hack for detecting Android, this should
+  # only be used to fix bugs in the browser where feature detection cannot
+  # be used.
+  #
+  # Returns true if the browser's user agent contains the string "Android". 
   @isAndroid: ->
     (/Android/i).test(window.navigator.userAgent)

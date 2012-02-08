@@ -1,3 +1,30 @@
+# Adds a new "tap" event to jQuery. This offers improved performance over
+# click for touch devices whcih often have up to a 300ms delay before
+# triggering callbacks. Instead it uses a combination of touchstart and
+# touchend events to to create a fake click. It will also cancel the event
+# after 300ms (to allow the user to perform a "longtap") or if the touchend
+# event is triggered on a different element.
+#
+# Additonal options can be provided as part of the eventData object.
+#
+# preventDefault - If false will not call preventDefault() on the touchstart
+#                  event (deafult: true).
+# onTapDown      - Callback for the "touchstart" incase additonal code needs
+#                  to be run such as event.stopPropagation().
+# onTapUp        - Callabck for the "touchend" event, called after the main
+#                  event handler.
+# timeout        - Time to allow before cancelling the event (default: 300).
+#
+# Example
+#
+#   jQuery("a").bind "tap", =>
+#     # This is called on "touchend" on the same element.
+#
+#   options =
+#     preventDefault: false
+#     onTapDown: (event) -> event.stopPropagation()
+#   jQuery(doument).delegate "button", "tap", options, =>
+#     # This is called on "touchend" on the same element.
 jQuery.event.special.tap =
   add: (eventHandler) ->
     data = eventHandler.data = eventHandler.data or {}
@@ -10,34 +37,37 @@ jQuery.event.special.tap =
       data.event = event
       data.touched = setTimeout ->
         data.touched = null
-      , 300
+      , data.timeout or 300
 
-      jQuery(document).bind touchend: onTapEnd, mouseup: onTapEnd
+      jQuery(document).bind(touchend: onTapEnd, mouseup: onTapEnd)
 
     onTapEnd = (event) ->
       if data.touched
         clearTimeout(data.touched)
         if event.target is context or jQuery.contains(context, event.target)
-          (eventHandler.origHandler or eventHandler.handler).call(this, data.event)
+          handler = eventHandler.origHandler or eventHandler.handler
+          handler.call(this, data.event)
         data.touched = null
 
       data.onTapUp.apply(this, arguments) if data.onTapUp
 
-      jQuery(document).unbind touchstart: onTapEnd, mousedown: onTapEnd
+      jQuery(document).unbind(touchstart: onTapEnd, mousedown: onTapEnd)
 
     data.tapHandlers = touchstart: onTapStart, mousedown: onTapStart
     if eventHandler.selector
-      jQuery(context).delegate eventHandler.selector, data.tapHandlers
+      jQuery(context).delegate(eventHandler.selector, data.tapHandlers)
     else
-      jQuery(context).bind data.tapHandlers
+      jQuery(context).bind(data.tapHandlers)
 
   remove: (eventHandler) ->
-    jQuery(this).unbind eventHandler.data.tapHandlers
+    jQuery(this).unbind(eventHandler.data.tapHandlers)
 
 # Add support for "touch" events.
 Annotator.Delegator.natives.push("touchstart", "touchmove", "touchend", "tap")
 
 Annotator.Plugin.Touch.utils = do ->
+  # Pinched from Paul Irish's blog.
+  # See: http://paulirish.com/2011/requestanimationframe-for-smart-animating/
   vendors = ['ms', 'moz', 'webkit', 'o']
 
   requestAnimationFrame = window.requestAnimationFrame
@@ -45,7 +75,8 @@ Annotator.Plugin.Touch.utils = do ->
 
   for prefix in vendors when !requestAnimationFrame
     requestAnimationFrame = window["#{prefix}RequestAnimationFrame"]
-    cancelAnimationFrame  = window["#{prefix}CancelAnimationFrame"] or window["#{prefix}CancelRequestAnimationFrame"]
+    cancelAnimationFrame  = window["#{prefix}CancelAnimationFrame"] or
+                            window["#{prefix}CancelRequestAnimationFrame"]
 
   unless requestAnimationFrame
     lastTime = 0
@@ -59,6 +90,28 @@ Annotator.Plugin.Touch.utils = do ->
     cancelAnimationFrame = (id) -> clearTimeout(id)
 
   {
+    # Public: Cross browser compatibile version of requestAnimationFrame().
+    #
+    # callback - A function to be called when the next frame is available.
+    #
+    # Examples
+    #
+    #   var id = utils.requestAnimationFrame ->
+    #     doSomethingCool()
+    #
+    # Returns a id to cancel the request.
     requestAnimationFrame: requestAnimationFrame
+
+    # Public: Cross browser compatibile version of cancelAnimationFrame().
+    #
+    # id - A request id.
+    #
+    # Examples
+    #
+    #   id = utils.requestAnimationFrame ->
+    #     thisWillNeverBeCalled()
+    #   utils.cancelAnimationFrame(id)
+    #
+    # Returns nothing.
     cancelAnimationFrame:  cancelAnimationFrame
   }
