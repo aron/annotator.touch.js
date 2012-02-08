@@ -222,15 +222,15 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
 
     @annotator.viewer.on "show", =>
       @highlighter.disable() if @highlighter
-      window.getSelection().removeAllRanges()
 
     @annotator.editor.on "hide", =>
-      @_watchForSelection()
-      @highlighter.enable() if @highlighter
-      window.getSelection().removeAllRanges()
+      @utils.nextTick =>
+        @highlighter.enable().deselect() if @highlighter
+        @_watchForSelection()
 
     @annotator.viewer.on "hide", =>
-      @highlighter.enable() if @highlighter and @editor.element.hasClass(@editor.classes.hide)
+      @utils.nextTick =>
+        @highlighter.enable().deselect() if @highlighter
 
   # Removes the default mouse event bindings created by the Annotator.
   #
