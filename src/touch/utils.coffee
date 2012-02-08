@@ -38,11 +38,10 @@ jQuery.event.special.tap =
       data.touched = setTimeout ->
         data.touched = null
       , data.timeout or 300
-
       jQuery(document).bind(touchend: onTapEnd, mouseup: onTapEnd)
 
     onTapEnd = (event) ->
-      if data.touched
+      if data.touched?
         clearTimeout(data.touched)
         if event.target is context or jQuery.contains(context, event.target)
           handler = eventHandler.origHandler or eventHandler.handler
