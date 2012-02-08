@@ -2,8 +2,9 @@ fs   = require "fs"
 FFI  = require "node-ffi"
 libc = new FFI.Library(null, "system": ["int32", ["string"]])
 run  = libc.system
+pkg  = require "package"
 
-VERSION = "0.1.0"
+VERSION = pkg.version
 PACKAGE = "annotator.touch"
 OUTPUT  = "pkg/#{PACKAGE}.min.js"
 STYLES  = "pkg/#{PACKAGE}.css"
@@ -47,6 +48,7 @@ utils =
     css.replace(/(url\(([^)]+)\.png\))/g, b64_url)
 
   inline: (src, dest) ->
-    run "cat #{src.join(' ')} > #{dest}"
+    run "echo '#{HEADER}' > #{dest}"
+    run "cat #{src.join(' ')} >> #{dest}"
     code = fs.readFileSync(dest, 'utf8')
     fs.writeFileSync(dest, @dataurlify(code))
