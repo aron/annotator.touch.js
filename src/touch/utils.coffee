@@ -114,4 +114,19 @@ Annotator.Plugin.Touch.utils = do ->
     #
     # Returns nothing.
     cancelAnimationFrame:  cancelAnimationFrame
+
+    # Public: Defer a callback until the next available moment. This is useful
+    # for queuing a function to run in the near future for example to run a
+    # function after the current callback stack has run.
+    #
+    # fn - A function to defer.
+    #
+    # Examples
+    #
+    #   annotator.editor.on "show", ->
+    #     # Hide viewer after rest of "show" events have fired.
+    #     utils.nextTick(annotator.viewer.show)
+    #
+    # Returns nothing.
+    nextTick: (fn) -> setTimeout(fn, 0)
   }
