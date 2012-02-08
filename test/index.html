@@ -23,7 +23,10 @@
     jQuery.ajaxSetup async: false
 
     modules = jQuery.trim """
-    touch touch/utils
+    touch
+    touch/utils
+    touch/editor
+    touch/viewer
     """
     modules = modules.split(/\s+/)
 

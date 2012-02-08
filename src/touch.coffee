@@ -103,7 +103,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   #
   # Returns nothing.
   pluginDestroy: ->
-    @adder.remove() if @adder
+    @controls.remove() if @controls
     @highlighter.disable() if @highlighter
     @annotator.editor.unsubscribe "hide", @_watchForSelection if @annotator
 
