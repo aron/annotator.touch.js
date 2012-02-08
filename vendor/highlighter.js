@@ -430,7 +430,7 @@
      *
      * Returns the position object or null.
      */
-    getFirstPosition: function (event) {
+    getFirstPosition: function (event, useClient) {
       var firstTouch = event.touches ? event.touches[0] : event;
       if (firstTouch) {
         return {
@@ -686,11 +686,10 @@
       var position = this.getFirstPosition(event);
       if (position && this.selected) {
         this._offset = {
-          y: position.y - parseFloat(event.target.style.top),
-          x: position.x - parseFloat(event.target.style.left)
+          y: position.y - parseFloat(event.target.style.top)  + window.scrollY,
+          x: position.x - parseFloat(event.target.style.left) + window.scrollX
         };
 
-        
         this._startPosition = this._endPosition = position;
         this._isStartHandle = event.target === this.handles.start;
 
