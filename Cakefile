@@ -30,8 +30,8 @@ task "build", "Concatenates and minifies CSS & JS", (options) ->
   MINIFY = if options['no-minify'] then "cat" else UGLIFY
 
   run """
-  mkdir -p pkg && echo "#{HEADER}" > #{OUTPUT} && 
-  cat src/touch.coffee src/touch/*.coffee | 
+  mkdir -p pkg && echo "#{HEADER}" > #{OUTPUT} &&
+  cat src/touch.coffee src/touch/*.coffee |
   #{COFFEE} --stdio --print | #{MINIFY} >> #{OUTPUT} && echo "" >> #{OUTPUT}
   """
   utils.inline ["css/annotator.touch.css"], STYLES
@@ -40,7 +40,7 @@ task "pkg", "Creates a zip package with minified scripts", ->
   invoke "build"
   run "zip -jJ #{PACKAGE}.#{VERSION}.zip #{OUTPUT} #{STYLES}"
 
-utils = 
+utils =
   dataurlify: (css) ->
     # NB: path to image is "src/..." because the CSS urls start with "../img"
     b64_str = (name) -> fs.readFileSync("src/#{name}.png").toString('base64')
