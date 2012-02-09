@@ -12,7 +12,9 @@ COFFEE  = "`npm bin`/coffee"
 UGLIFY  = "`npm bin`/uglifyjs"
 HEADER  = """
 /*  Touch Annotator Plugin - v#{VERSION}
- *  Copyright 2012, Compendio
+ *  Copyright 2012, Compendio <www.compendio.ch>
+ *  Released under the MIT license
+ *  More Information: http://github.com/aron/annotator.touch.js
  */
 """
 

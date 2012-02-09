@@ -14,7 +14,9 @@ the tool on touch devices. It has been tested on the following devices.
 Usage
 -----
 
-The plugin requires the _annotator.js_ and _annotator.css_ to be included on the page. See the annotator [Getting Started][#ann-install] guide for instructions then simply include the _annotator.touch.js_ and 
+The plugin requires the _annotator.js_ and _annotator.css_ to be included on
+the page. See the annotator [Getting Started][#ann-install] guide for
+instructions then simply include the _annotator.touch.js_ and 
 _annotator.touch.css_ file in your page.
 
 ```html
@@ -116,4 +118,12 @@ The plugin uses the following libraries for development:
 License
 -------
 
+This plugin was commissioned and open sourced by Compedio.
+
+Copyright 2012, Compendio Bildungsmedien AG
+Neunbrunnenstrasse 50
+8050 Zürich
+www.compendio.ch
+
 Released under the [MIT license][#license]
+
