@@ -11,13 +11,20 @@ the tool on touch devices. It has been tested on the following devices.
 
 [#annotator]: http://okfnlabs.org/annotator/
 
+There is a [demo available online][#demo].
+
+[#demo]: http://aron.github.com/annotator.touch.js
+
 Usage
 -----
 
 The plugin requires the _annotator.js_ and _annotator.css_ to be included on
 the page. See the annotator [Getting Started][#ann-install] guide for
 instructions then simply include the _annotator.touch.js_ and 
-_annotator.touch.css_ file in your page.
+_annotator.touch.css_ file in your page. These can be downloaded from the
+GitHub [download page][#download].
+
+[#download]: http://github.com/aron/annotator.touch.js/downloads
 
 ```html
 <link rel="stylesheet" href="./annotator.css" />
@@ -118,7 +125,7 @@ The plugin uses the following libraries for development:
 License
 -------
 
-This plugin was commissioned and open sourced by Compedio.
+This plugin was commissioned and open sourced by Compendio.
 
 Copyright 2012, Compendio Bildungsmedien AG
 Neunbrunnenstrasse 50
@@ -126,4 +133,3 @@ Neunbrunnenstrasse 50
 www.compendio.ch
 
 Released under the [MIT license][#license]
-
