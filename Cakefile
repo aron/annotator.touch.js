@@ -40,7 +40,7 @@ task "build", "Concatenates and minifies CSS & JS", (options) ->
 
 task "pkg", "Creates a zip package with minified scripts", ->
   invoke "build"
-  run "zip -jJ #{PACKAGE}.#{VERSION}.zip #{OUTPUT} #{STYLES}"
+  run "zip -jJ pkg/#{PACKAGE}.#{VERSION}.zip #{OUTPUT} #{STYLES}"
 
 utils =
   dataurlify: (css) ->
