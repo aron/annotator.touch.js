@@ -24,6 +24,15 @@
       force: location.search.indexOf('force') > -1,
       useHighlighter: location.search.indexOf('highlighter') > -1
     });
+
+    if (!Annotator.Plugin.Touch.isTouchDevice()) {
+      if (location.search.indexOf('force') > -1) {
+        jQuery("body").prepend('<p><a href="./index.html">Disable Plugin in Desktop Browser</a></p>');
+      } else {
+        jQuery("body").prepend('<p><a href="./index.html?force">Enable Plugin in Desktop Browser</a></p>');
+      }
+    }
+
     var annotator = jQuery("#content").data('annotator');
   </script>
 </body>
