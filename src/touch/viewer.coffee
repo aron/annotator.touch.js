@@ -22,7 +22,7 @@ class Annotator.Plugin.Touch.Viewer extends Annotator.Delegator
     super @viewer.element[0], options
 
     @element.unbind("click")
-    @element.addClass("annotator-touch-widget")
+    @element.addClass("annotator-touch-widget annotator-touch-viewer")
 
     @on("load", @_onLoad)
 
