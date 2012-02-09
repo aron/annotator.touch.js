@@ -1,7 +1,7 @@
 {
   "name": "annotator.touch.js",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Adds touch device support to the Annotator",
   "dependencies": {
     "uglify-js": "1.2.4",
