@@ -161,7 +161,7 @@ class Annotator.Plugin.Touch extends Annotator.Plugin
   # Returns an annotation object.
   createAnnotation: (range, quote) ->
     @annotator.selectedRanges = [range]
-    annotation = @annotator.createAnnotation()
+    annotation = @annotator.setupAnnotation @annotator.createAnnotation()
     annotation.quote = quote or range.text()
     annotation
 
