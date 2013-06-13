@@ -88,7 +88,7 @@ class Annotator.Plugin.Touch.Editor extends Annotator.Delegator
       id: 'quote'
       load: (field, annotation) =>
         @hideQuote()
-        @quote.find('span').escape(annotation.quote || '')
+        @quote.find('span').html Annotator.Util.escape(annotation.quote || '')
         @quote.find("button").toggle(@_isTruncated())
 
     @quote.empty().addClass("annotator-item-quote")
