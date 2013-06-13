@@ -4,8 +4,8 @@
   "version": "1.0.1",
   "description": "Adds touch device support to the Annotator",
   "dependencies": {
-    "uglify-js": "1.2.4",
-    "coffee-script": "1.2",
-    "node-ffi": "0.5.0"
+    "coffee-script": "~1.6.0",
+    "uglify-js": "~1.2.5",
+    "node-ffi": "~0.5.0"
   }
 }

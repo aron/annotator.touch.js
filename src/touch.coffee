@@ -9,7 +9,7 @@
 #   jQuery("#annotator").annotator().annotator('addPlugin', 'Touch');
 #
 # Returns a new instance of the Touch plugin.
-Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
+class Annotator.Plugin.Touch extends Annotator.Plugin
   # Export some useful globals into the class scope.
   _t = Annotator._t
   jQuery = Annotator.$
@@ -161,7 +161,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   # Returns an annotation object.
   createAnnotation: (range, quote) ->
     @annotator.selectedRanges = [range]
-    annotation = @annotator.createAnnotation()
+    annotation = @annotator.setupAnnotation @annotator.createAnnotation()
     annotation.quote = quote or range.text()
     annotation
 
@@ -367,7 +367,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
         @showEditor(annotation)
 
   # Event callback for tap events on highlights and displays the Viewer.
-  # Allows events on anchor elements and those with the 
+  # Allows events on anchor elements and those with the
   # "data-annotator-clickable" attribute to pass through. Watches the
   # document for further taps in order to remove the viewer.
   #
@@ -413,7 +413,7 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   #   else
   #     # Browser does not handle touch events.
   #
-  # Returns 
+  # Returns
   @isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
 
@@ -421,6 +421,6 @@ Annotator.Plugin.Touch = class Touch extends Annotator.Plugin
   # only be used to fix bugs in the browser where feature detection cannot
   # be used.
   #
-  # Returns true if the browser's user agent contains the string "Android". 
+  # Returns true if the browser's user agent contains the string "Android".
   @isAndroid: ->
     (/Android/i).test(window.navigator.userAgent)

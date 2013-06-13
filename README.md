@@ -20,7 +20,7 @@ Usage
 
 The plugin requires the _annotator.js_ and _annotator.css_ to be included on
 the page. See the annotator [Getting Started][#ann-install] guide for
-instructions then simply include the _annotator.touch.js_ and 
+instructions then simply include the _annotator.touch.js_ and
 _annotator.touch.css_ file in your page. These can be downloaded from the
 GitHub [download page][#download].
 
@@ -55,7 +55,7 @@ jQuery('#content').annotator().annotator("addPlugin", "Touch", {
 ```
 
  - `force`: Forces the touch controls to be loaded into the page. This is
-   useful for testing or if the annotator will always be used in a touch 
+   useful for testing or if the annotator will always be used in a touch
    device (say when bundled into an application).
  - `useHighlighter`: Some touch devices do not allow the browser access to the
    selected text using `window.getSelection()`. highlighter.js is provided
@@ -80,10 +80,10 @@ Development
 If you're interested in developing the plugin. You can install the developer
 dependancies by running the following command in the base directory:
 
-    $ npm install .
+    $ npm install
 
 Development requires _node_ and _npm_ binaries to be intalled on your system.
-It was developed with `node --version 0.6.6` and `npm --version 1.1.0 -beta-4`.
+It has been tested with `node --version 0.10.7` and `npm --version 1.2.21`.
 Details on installation can be found on the [node website][#node].
 
 Then visit http://localhost:8000 in your browser.
@@ -93,7 +93,7 @@ There is a _Cakefile_ containing useful commands included.
     $ cake serve # serves the directory at http://localhost:8000 (requires python)
     $ cake test  # opens the test suite in your browser
     $ cake watch # compiles .coffee files into lib/*.js when they change
-    $ cake build # creates a production pkg/annotator.offline.js file
+    $ cake build # creates a production pkg/annotator.touch.min.js file
     $ cake pkg   # creates a zip file of production files
 
 [#node]: http://nodejs.org/

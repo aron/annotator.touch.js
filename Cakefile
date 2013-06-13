@@ -2,7 +2,7 @@ fs   = require "fs"
 FFI  = require "node-ffi"
 libc = new FFI.Library(null, "system": ["int32", ["string"]])
 run  = libc.system
-pkg  = require "package"
+pkg  = require "./package"
 
 VERSION = pkg.version
 PACKAGE = "annotator.touch"
