@@ -38,7 +38,7 @@
 		to(rgba(0, 0, 0, 0.85))
 	);
 	background: linear-gradient(
-		-90deg,
+		to bottom,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
 		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
@@ -172,7 +172,7 @@
 		to(rgba(255, 255, 255, 0))
 	);
 	background: linear-gradient(
-		0deg,
+		to bottom,
 		from(rgba(255, 255, 255, 0.8)) 90%,
 		to(rgba(255, 255, 255, 0))
 	);
@@ -378,7 +378,7 @@
 	    rgb(210, 210, 210)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(210, 210, 210) 50%,
 	    rgb(190, 190, 190) 50%,
@@ -442,7 +442,7 @@
 	    rgb(54, 101, 250)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(118, 145, 251),
 	    rgb(80, 117, 251) 50%,
 	    rgb(56, 101, 249) 50%,
@@ -483,7 +483,7 @@
 	    rgb(255, 0, 156)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(252, 124, 202),
 	    rgb(232, 93, 178) 50%,
 	    rgb(209, 46, 142) 50%,
