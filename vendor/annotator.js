@@ -1,12 +1,12 @@
 /*
-** Annotator 1.2.6-dev-dc3e674
+** Annotator v1.2.7
 ** https://github.com/okfn/annotator/
 **
 ** Copyright 2012 Aron Carroll, Rufus Pollock, and Nick Stenning.
 ** Dual licensed under the MIT and GPLv3 licenses.
 ** https://github.com/okfn/annotator/blob/master/LICENSE
 **
-** Built at: 2013-06-13 16:51:56Z
+** Built at: 2013-06-27 21:49:30Z
 */
 
 
@@ -1079,7 +1079,7 @@
         range = _ref1[_k];
         container = range.commonAncestor;
         if ($(container).hasClass('annotator-hl')) {
-          container = $(container).parents('[class^=annotator-hl]')[0];
+          container = $(container).parents('[class!=annotator-hl]')[0];
         }
         if (this.isAnnotator(container)) {
           return;
