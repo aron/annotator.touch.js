@@ -86,15 +86,18 @@ Development requires _node_ and _npm_ binaries to be intalled on your system.
 It has been tested with `node --version 0.10.7` and `npm --version 1.2.21`.
 Details on installation can be found on the [node website][#node].
 
+Run the local server:
+
+    $ make serve
+
 Then visit http://localhost:8000 in your browser.
 
-There is a _Cakefile_ containing useful commands included.
+There is a _Makefile_ containing useful commands included.
 
-    $ cake serve # serves the directory at http://localhost:8000 (requires python)
-    $ cake test  # opens the test suite in your browser
-    $ cake watch # compiles .coffee files into lib/*.js when they change
-    $ cake build # creates a production pkg/annotator.touch.min.js file
-    $ cake pkg   # creates a zip file of production files
+    $ make serve # serves the directory at http://localhost:8000 (requires python)
+    $ make watch # compiles .coffee files into lib/*.js when they change
+    $ make build # creates compiled JavaScript and CSS in the pkg directory
+    $ make pkg   # creates a zip file of production files
 
 [#node]: http://nodejs.org/
 

@@ -1,11 +1,14 @@
 {
   "name": "annotator.touch.js",
+  "display_name": "Annotator Touch Plugin",
+  "homepage": "https://github.com/aron/annotator.touch.js",
   "private": true,
   "version": "1.1.1b1",
   "description": "Adds touch device support to the Annotator",
   "dependencies": {
     "coffee-script": "1.6.3",
-    "uglify-js": "2.3.6",
-    "node-ffi": "0.5.7"
-  }
+    "uglify-js": "2.3.6"
+  },
+  "license": "MIT",
+  "readmeFilename": "README"
 }
