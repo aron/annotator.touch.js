@@ -146,25 +146,6 @@ class Annotator.Plugin.Touch extends Annotator.Plugin
     usingHighlighter = @options.useHighlighter
     not usingHighlighter or @toggle.attr("data-state") is Touch.states.ON
 
-  # Creates a new annotion object for the provided NormalisedRange and
-  # optional quote. Including the quote is faster than using the
-  # NormalisedRange#text() method.
-  #
-  # range - A NormalisedRange created from a native Range object.
-  # quote - The string of text extracted from the selection.
-  #
-  # Examples
-  #
-  #   ann = touch.createAnnotation()
-  #   annotator.showEditor(ann)
-  #
-  # Returns an annotation object.
-  createAnnotation: (range, quote) ->
-    @annotator.selectedRanges = [range]
-    annotation = @annotator.setupAnnotation @annotator.createAnnotation()
-    annotation.quote = quote or range.text()
-    annotation
-
   # Public: Shows the Editor and hides the Touch controls.
   #
   # annotation - An annotation object to load into the Editor.
@@ -363,8 +344,18 @@ class Annotator.Plugin.Touch extends Annotator.Plugin
       range = browserRange.normalize().limit(@element[0])
 
       if range and not @annotator.isAnnotator(range.commonAncestor)
-        annotation = @createAnnotation(range, @range.toString())
-        @showEditor(annotation)
+        # Here we manually apply our captured range to the annotation object
+        # because we cannot rely on @selectedRanges on touch browsers.
+        onAnnotationCreated = (annotation) =>
+          @annotator.unsubscribe('beforeAnnotationCreated', onAnnotationCreated)
+          annotation.quote= range.toString()
+          annotation.ranges = [range]
+
+        @annotator.subscribe('beforeAnnotationCreated', onAnnotationCreated)
+
+        # Trigger the main adder handler which handles displaying the editor
+        # and triggering the correct events for persistance.
+        @annotator.onAdderClick(event)
 
   # Event callback for tap events on highlights and displays the Viewer.
   # Allows events on anchor elements and those with the
@@ -413,7 +404,7 @@ class Annotator.Plugin.Touch extends Annotator.Plugin
   #   else
   #     # Browser does not handle touch events.
   #
-  # Returns
+  # Returns true if the device appears so support touch events.
   @isTouchDevice: ->
     ('ontouchstart' of window) or window.DocumentTouch and document instanceof DocumentTouch
 
