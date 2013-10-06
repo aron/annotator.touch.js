@@ -63,17 +63,25 @@ serve:
 watch:
 	@$(COFFEE) --watch --output ./lib ./src
 
-build: pkgdir
+javascript: pkgdir
 	@echo "$$HEADER" > $(OUTPUT)
 	@cat src/touch.coffee src/touch/*.coffee | \
 		$(COFFEE) --stdio --print | \
 		$(PROCESSOR) >> $(OUTPUT)
+	@echo "Created $(OUTPUT)"
 
+stylesheet: pkgdir
 	@echo "$$HEADER" > $(CSS_OUTPUT)
 	@$(COFFEE) tools/inline.coffee css/annotator.touch.css >> $(CSS_OUTPUT)
+	@echo "Created $(CSS_OUTPUT)"
 
-pkg: build
-	@make build MINIFY=true
-	@zip -jJ $(PACKAGE).$(VERSION).zip $(OUTPUT) $(MIN_OUTPUT) $(CSS_OUTPUT)
+build: javascript stylesheet
 
-.PHONY help pkgdir clean serve watch build pkg
+pkg:
+	@make javascript
+	@make javascript MINIFY=true
+	@make stylesheet
+	@zip -qjJ $(PACKAGE).$(VERSION).zip $(OUTPUT) $(MIN_OUTPUT) $(CSS_OUTPUT) LICENSE
+	@echo "Created $(PACKAGE).$(VERSION).zip"
+
+.PHONY: help pkgdir clean serve watch build stylesheet javascript pkg
