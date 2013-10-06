@@ -15,12 +15,19 @@
   <script src="../vendor/highlighter.js"></script>
   <script src="../vendor/coffeescript.js"></script>
   <script src="./vendor/mocha.js"></script>
-  <script src="./vendor/sinon.js"></script>
   <script src="./vendor/chai.js"></script>
-  <script src="./vendor/sinon-chai.js"></script>
+  <script src="./vendor/sinon.js"></script>
   <script>
     mocha.setup('bdd');
     window.expect = chai.expect;
+
+    sinon.createPromiseStub = function () {
+      var promise = sinon.stub(jQuery.Deferred().promise());
+      promise.done.returns(promise);
+      promise.fail.returns(promise);
+      promise.then.returns(promise);
+      return promise;
+    };
   </script>
   <script type="text/coffeescript">
     jQuery.ajaxSetup async: false
