@@ -1,7 +1,7 @@
 {
   "name": "annotator.touch.js",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1b1",
   "description": "Adds touch device support to the Annotator",
   "dependencies": {
     "coffee-script": "1.6.3",
