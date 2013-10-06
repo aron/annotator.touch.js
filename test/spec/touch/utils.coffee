@@ -25,7 +25,7 @@ describe "jQuery.fn.bind(\"tap\")", ->
     element.bind("tap", target)
     element.trigger("touchstart")
     element.trigger("touchend")
-    expect(target).was.called()
+    sinon.assert.called(target)
 
   it "should not fire the call back if 300ms expires", (done) ->
     target = sinon.stub()
@@ -33,7 +33,7 @@ describe "jQuery.fn.bind(\"tap\")", ->
     element.trigger("touchstart")
     setTimeout ->
       element.trigger("touchend")
-      expect(target).was.notCalled()
+      sinon.assert.notCalled(target)
       done()
     , 500
     clock.tick(500)
@@ -43,7 +43,7 @@ describe "jQuery.fn.bind(\"tap\")", ->
     element.bind("tap", target)
     element.trigger("touchstart")
     jQuery("body").trigger("touchend")
-    expect(target).was.notCalled()
+    sinon.assert.notCalled(target)
 
   it "should allow the timeout to be specified", (done) ->
     target = sinon.stub()
@@ -51,7 +51,7 @@ describe "jQuery.fn.bind(\"tap\")", ->
     element.trigger("touchstart")
     setTimeout ->
       element.trigger("touchend")
-      expect(target).was.called()
+      sinon.assert.called(target)
       done()
     , 1000
     clock.tick(1000)
@@ -62,5 +62,5 @@ describe "jQuery.fn.bind(\"tap\")", ->
     element.bind("tap", onTapUp: endTarget, onTapDown: startTarget, ->)
     element.trigger("touchstart")
     element.trigger("touchend")
-    expect(endTarget).was.called()
-    expect(startTarget).was.called()
+    sinon.assert.called(endTarget)
+    sinon.assert.called(startTarget)

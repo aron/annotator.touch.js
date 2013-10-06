@@ -32,7 +32,7 @@ describe "Touch", ->
     it "should start watching for selections", ->
       target = sinon.stub(plugin, "_watchForSelection")
       plugin.pluginInit()
-      expect(target).was.called()
+      sinon.assert.called(target)
 
     it "should append the @controls to the document.body", ->
       plugin.pluginInit()
@@ -59,7 +59,7 @@ describe "Touch", ->
     it "should disable the @highlighter object", ->
       target = sinon.stub(plugin.highlighter, "disable")
       plugin.pluginDestroy()
-      expect(target).was.called()
+      sinon.assert.called(target)
 
   describe "#startAnnotating()", ->
     it "should toggle the data-state to 'on'", ->
@@ -74,7 +74,7 @@ describe "Touch", ->
       target = sinon.stub()
       plugin.highlighter = enable: target
       plugin.startAnnotating()
-      expect(target).was.called()
+      sinon.assert.called(target)
       delete plugin.highlighter
 
   describe "#stopAnnotating()", ->
@@ -90,7 +90,7 @@ describe "Touch", ->
       target = sinon.stub()
       plugin.highlighter = disable: target
       plugin.stopAnnotating()
-      expect(target).was.called()
+      sinon.assert.called(target)
       delete plugin.highlighter
 
   describe "#isAnnotating()", ->
@@ -111,42 +111,24 @@ describe "Touch", ->
       target = plugin.isAnnotating()
       expect(target).to.equal(true)
 
-  describe "#createAnnotation()", ->
-    range = null
-
-    beforeEach ->
-      nativeRange = document.createRange()
-      nativeRange.selectNodeContents(jQuery("#fixture p")[0])
-
-      browserRange = new Annotator.Range.BrowserRange(nativeRange)
-      range = browserRange.normalize()
-
-    it "should return a newly created annotation", ->
-      target = plugin.createAnnotation(range)
-      expect(target).to.have.property('quote').to.equal("This is a test sentence.")
-
-    it "should use the provided quote", ->
-      target = plugin.createAnnotation(range, "passed quotation")
-      expect(target).to.have.property('quote').to.equal("passed quotation")
-
   describe "#showEditor()", ->
     it "should show the editor", ->
       ann = {id: "this-is-an-id"}
       target = sinon.stub(plugin.annotator, "showEditor")
       plugin.showEditor(ann)
-      expect(target).was.called()
-      expect(target).was.calledWith(ann, {})
+      sinon.assert.called(target)
+      sinon.assert.calledWith(target, ann, {})
 
     it "should hide the touch controls", ->
       target = sinon.stub(plugin, "hideControls")
       plugin.showEditor({})
-      expect(target).was.called()
+      sinon.assert.called(target)
 
   describe "#showControls()", ->
     it "should show the controls", ->
       plugin.showControls()
       expect(plugin.controls[0].className).not.to.include(plugin.classes.hide)
-  
+
   describe "#hideControls()", ->
     it "should hide the controls", ->
       plugin.hideControls()
