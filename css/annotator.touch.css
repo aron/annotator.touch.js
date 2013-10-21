@@ -1,7 +1,7 @@
-/*  Touch Annotator Plugin - v1.0.1
- *  Copyright 2012, Compendio <www.compendio.ch>
+/*  Annotator Touch Plugin - v1.1.1
+ *  Copyright 2012-2013, Compendio <www.compendio.ch>
  *  Released under the MIT license
- *  More Information: http://github.com/aron/annotator.touch.js
+ *  More Information: https://github.com/aron/annotator.touch.js
  */
 .annotator-viewer .annotator-touch-controls .annotator-edit::after {
 	/* Assign the image once to ensure data uri is not repeated. */
@@ -43,7 +43,7 @@
 		to(rgba(0, 0, 0, 0.85))
 	);
 	background: linear-gradient(
-		-90deg,
+		to bottom,
 		from(rgba(57, 57, 57, 0.85)),
 		color-stop(0.5, rgba(58, 58, 58, 0.85)) 50%,
 		color-stop(0.5, rgba(0, 0, 0, 0.85)) 50%,
@@ -177,7 +177,7 @@
 		to(rgba(255, 255, 255, 0))
 	);
 	background: linear-gradient(
-		0deg,
+		to bottom,
 		from(rgba(255, 255, 255, 0.8)) 90%,
 		to(rgba(255, 255, 255, 0))
 	);
@@ -241,9 +241,9 @@
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
 	-moz-box-pack: center;
-	-moz-box-align: center
+	-moz-box-align: center;
 	box-pack: center;
-	box-align: center
+	box-align: center;
 }
 
 .annotator-touch-editor .annotator-touch-widget {
@@ -383,13 +383,13 @@
 	    rgb(210, 210, 210)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(245, 245, 245),
 	    rgb(210, 210, 210) 50%,
 	    rgb(190, 190, 190) 50%,
 	    rgb(210, 210, 210)
 	);
-	-webkit-box-shadow: 
+	-webkit-box-shadow:
 		inset 0 0 5px rgba(255, 255, 255, 0.2),
 		inset 0 0 1px rgba(255, 255, 255, 0.8);
 	-moz-box-shadow:
@@ -447,7 +447,7 @@
 	    rgb(54, 101, 250)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(118, 145, 251),
 	    rgb(80, 117, 251) 50%,
 	    rgb(56, 101, 249) 50%,
@@ -488,7 +488,7 @@
 	    rgb(255, 0, 156)
 	);
 	background-image: linear-gradient(
-	    -90deg,
+	    to bottom,
 	    rgb(252, 124, 202),
 	    rgb(232, 93, 178) 50%,
 	    rgb(209, 46, 142) 50%,
