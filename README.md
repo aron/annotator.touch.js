@@ -22,9 +22,9 @@ The plugin requires the _annotator.js_ and _annotator.css_ to be included on
 the page. See the annotator [Getting Started][#ann-install] guide for
 instructions then simply include the _annotator.touch.js_ and
 _annotator.touch.css_ file in your page. These can be downloaded from the
-GitHub [download page][#download].
+GitHub [releases page][#download].
 
-[#download]: http://github.com/aron/annotator.touch.js/downloads
+[#download]: http://github.com/aron/annotator.touch.js/releases
 
 ```html
 <link rel="stylesheet" href="./annotator.css" />
