@@ -121,7 +121,7 @@ The plugin uses the following libraries for development:
  - [Sinon][#sinon]: Provides spies, stubs and mocks for methods and functions.
  - [Chai][#chai]:   Provides all common assertions.
 
-[#mocha]: http://visionmedia.github.com/mocha/
+[#mocha]: http://mochajs.org/
 [#sinon]: http://chaijs.com/
 [#chai]:  http://sinonjs.org/docs/
 
